@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>How skills reach an agent — animated</title>
+<style>
+  :root{--bg:#0a0f1e;--ink:#e8eefc;--muted:#9fb0d0;--cyan:#22d3ee;--blue:#60a5fa;--gold:#fbbf24;--green:#34d399;--violet:#a78bfa;--line:#27344e;}
+  *{box-sizing:border-box} html,body{margin:0;height:100%}
+  body{background:radial-gradient(1400px 800px at 50% -8%,#14213f 0%,var(--bg) 60%) fixed;color:var(--ink);
+    font:16px/1.4 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Inter,Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;padding:24px;}
+  .wrap{width:min(1340px,98vw)}
+  h1{font-size:25px;font-weight:700;margin:0 0 3px} h1 .a{color:var(--gold)}
+  .sub{color:var(--muted);font-size:14.5px;margin:0 0 14px}
+  .card{background:linear-gradient(180deg,rgba(20,33,63,.65),rgba(10,15,30,.65));border:1px solid var(--line);border-radius:18px;
+    padding:8px 10px 2px;box-shadow:0 30px 80px -40px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.03);}
+  svg{width:100%;height:auto;display:block}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;align-items:center;margin:11px 4px 2px;color:var(--muted);font-size:13px}
+  .legend b{color:var(--ink);font-weight:600} .chip{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:11px;height:11px;border-radius:50%;box-shadow:0 0 9px currentColor}
+  .key{margin-top:9px;color:var(--muted);font-size:14px} .key b{color:var(--ink);font-weight:700}
+  text{font-family:inherit;fill:var(--ink)}
+  .nt{font-weight:700;font-size:14.5px} .ns{font-size:11px;fill:var(--muted)} .wl{font-size:11px;font-weight:600}
+  .lane{font-size:11.5px;font-weight:700;letter-spacing:.6px}
+  .pod{fill:rgba(167,139,250,.04);stroke:rgba(167,139,250,.4);stroke-dasharray:5 6}
+  .sub-ro{fill:rgba(251,191,36,.05);stroke:rgba(251,191,36,.4)}
+  .sub-ctx{fill:rgba(52,211,153,.05);stroke:rgba(52,211,153,.4)}
+  .node{stroke-width:1.5}
+  .n-bl{fill:#0f1d3a;stroke:rgba(96,165,250,.55)} .n-cy{fill:#10203f;stroke:rgba(34,211,238,.5)}
+  .n-vi{fill:#141d36;stroke:rgba(167,139,250,.55)} .n-gd{fill:#1b1c2e;stroke:rgba(251,191,36,.5)}
+  .skchip{fill:rgba(167,139,250,.14);stroke:rgba(167,139,250,.4)}
+  .skhot{fill:rgba(251,191,36,.18);stroke:rgba(251,191,36,.65)}
+  .wire{fill:none;stroke-width:2}
+  .w-blue{stroke:rgba(96,165,250,.32)} .w-cyan{stroke:rgba(34,211,238,.3)} .w-gold{stroke:rgba(251,191,36,.32)} .w-green{stroke:rgba(52,211,153,.32)}
+  .badge{font-weight:800;font-size:12px;fill:#0a0f1e}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>How a skill reaches an agent — <span class="a">stored as an OCI image, discovered on demand</span></h1>
+  <p class="sub">Authored as open SKILL.md folders → built by Konflux → Quay → mounted read-only as an image volume → loaded only when a task needs it</p>
+
+  <div class="card">
+  <svg viewBox="0 0 1340 720" role="img" aria-label="Animated flow of how skills are stored and loaded into an agent">
+    <defs>
+      <filter id="glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+
+    <!-- ===== WIRES ===== -->
+    <path id="sK" class="wire w-blue"  d="M 266,196 C 286,184 290,160 300,152"/>
+    <path id="KQ" class="wire w-blue"  d="M 470,150 L 506,148"/>
+    <path id="QA" class="wire w-cyan"  d="M 622,190 L 622,232"/>
+    <path id="AO" class="wire w-cyan"  d="M 506,266 C 470,300 450,326 470,338"/>
+    <path id="OM" class="wire w-gold"  d="M 470,344 C 600,330 660,232 814,224"/>
+    <path id="DL" class="wire w-green" d="M 1040,322 L 1040,392"/>
+
+    <!-- ===== ① AUTHOR ===== -->
+    <text class="lane" x="56" y="96" style="fill:#8fb3f6">① AUTHOR — open standard</text>
+    <g filter="url(#soft)"><rect class="node n-vi" x="56" y="108" width="210" height="150" rx="13"/></g>
+    <text class="nt" x="161" y="134" text-anchor="middle">Agent Skills</text>
+    <text class="ns" x="161" y="151" text-anchor="middle">skills/&lt;name&gt;/SKILL.md folders</text>
+    <g font-size="10.5" fill="#c9b8fb">
+      <rect class="skchip" x="74" y="164" width="174" height="17" rx="4"/><text x="82" y="176">genesis-train/ — SKILL.md + pipeline.yaml</text>
+      <rect class="skchip" x="74" y="186" width="174" height="17" rx="4"/><text x="82" y="198">project-board-management/</text>
+      <rect class="skchip" x="74" y="208" width="174" height="17" rx="4"/><text x="82" y="220">openshift-docs/ · mcp-builder/</text>
+      <rect class="skchip" x="74" y="230" width="174" height="17" rx="4"/><text x="82" y="242">…one folder per skill</text>
+    </g>
+
+    <!-- ===== ② BUILD & STORE ===== -->
+    <text class="lane" x="300" y="100" style="fill:#8fb3f6">② BUILD &amp; STORE</text>
+    <g filter="url(#soft)"><rect class="node n-bl" x="300" y="112" width="170" height="68" rx="12"/></g>
+    <text class="nt" x="385" y="140" text-anchor="middle">Konflux</text>
+    <text class="ns" x="385" y="158" text-anchor="middle">COPY skills /skills/</text>
+    <g filter="url(#soft)"><rect class="node n-bl" x="506" y="104" width="232" height="84" rx="12"/></g>
+    <text class="nt" x="622" y="132" text-anchor="middle">Quay</text>
+    <text class="ns" x="622" y="150" text-anchor="middle">agent-office-skills:v0.0.4</text>
+    <text class="ns" x="622" y="167" text-anchor="middle" style="fill:#9cc3f8">OCI image · versioned · signed · SBOM</text>
+
+    <!-- ===== ③ MOUNT ===== -->
+    <text class="lane" x="300" y="290" style="fill:#7fd9ec">③ MOUNT — not a PVC</text>
+    <g filter="url(#soft)"><rect class="node n-cy" x="506" y="232" width="232" height="62" rx="11"/></g>
+    <text class="nt" x="622" y="258" text-anchor="middle" style="font-size:13.5px">AgentGateway.spec.skillsImage</text>
+    <text class="ns" x="622" y="276" text-anchor="middle">pins :v0.0.4</text>
+    <g filter="url(#soft)"><rect class="node n-cy" x="300" y="300" width="170" height="86" rx="12"/></g>
+    <text class="nt" x="385" y="330" text-anchor="middle">agent-office</text>
+    <text class="nt" x="385" y="347" text-anchor="middle">Operator</text>
+    <text class="ns" x="385" y="366" text-anchor="middle">declares an OCI image volume</text>
+    <text class="wl" x="560" y="206" style="fill:#7fd9ec">referenced by</text>
+    <text class="wl" x="498" y="430" style="fill:#d9b25e">kubelet pulls (IfNotPresent) ·</text>
+    <text class="wl" x="498" y="446" style="fill:#d9b25e">mounts read-only · agent-office-imagevol SCC</text>
+
+    <!-- ===== ④ AGENT POD ===== -->
+    <rect class="pod" x="792" y="92" width="500" height="586" rx="18"/>
+    <text class="lane" x="812" y="118" style="fill:#c4b3fb">AGENT POD · openclaw runtime</text>
+
+    <!-- /skills-catalog (read-only image volume) -->
+    <rect class="sub-ro" x="814" y="134" width="456" height="180" rx="13"/>
+    <text class="ns" x="828" y="156" style="fill:#fcd57a;font-weight:700">/skills-catalog — OCI image volume · READ-ONLY · every skill present, ~zero context cost</text>
+    <g font-size="10.5" fill="#cbd5e1">
+      <rect class="skhot" x="834" y="170" width="186" height="30" rx="6"/><text x="844" y="183" fill="#f6d488">genesis-train</text><text x="844" y="195" font-size="9" fill="#b89a52">SKILL.md + pipeline.yaml</text>
+      <rect class="skchip" x="1034" y="170" width="100" height="30" rx="6"/><text x="1044" y="188">openshift-docs</text>
+      <rect class="skchip" x="1148" y="170" width="110" height="30" rx="6"/><text x="1158" y="188">project-board</text>
+      <rect class="skchip" x="834" y="210" width="120" height="30" rx="6"/><text x="844" y="228">mcp-builder</text>
+      <rect class="skchip" x="968" y="210" width="100" height="30" rx="6"/><text x="978" y="228">find-token</text>
+      <rect class="skchip" x="1082" y="210" width="118" height="30" rx="6"/><text x="1092" y="228">skill-creator</text>
+      <rect class="skchip" x="834" y="250" width="150" height="30" rx="6"/><text x="844" y="268">cluster-update-advisor</text>
+      <rect class="skchip" x="998" y="250" width="120" height="30" rx="6"/><text x="1008" y="268">product-lifecycle</text>
+      <rect class="skchip" x="1132" y="250" width="126" height="30" rx="6"/><text x="1142" y="268">delegate-task</text>
+    </g>
+
+    <!-- context window -->
+    <rect class="sub-ctx" x="814" y="362" width="456" height="296" rx="13"/>
+    <text class="ns" x="828" y="384" style="fill:#7ee8c6;font-weight:700">openclaw CONTEXT WINDOW — progressive disclosure</text>
+    <text class="ns" x="828" y="406" style="fill:var(--muted)">Always loaded — the lightweight index (name + one-line description):</text>
+    <g font-size="10.5" fill="#9fb0d0">
+      <text x="836" y="426">genesis-train — train the Genesis model on OpenShift AI</text>
+      <text x="836" y="443">project-board-management — read/move kanban cards</text>
+      <text x="836" y="460">openshift-docs · mcp-builder · find-token · … (names only)</text>
+    </g>
+    <!-- the on-demand loaded skill -->
+    <g filter="url(#soft)"><rect class="node n-gd" x="836" y="486" width="412" height="150" rx="12"/></g>
+    <text class="nt" x="1042" y="512" text-anchor="middle" style="fill:#f6d488">genesis-train / SKILL.md — loaded on demand</text>
+    <text class="ns" x="1042" y="532" text-anchor="middle">read in full only because THIS task needs it</text>
+    <g font-size="10" fill="#bcae8f">
+      <text x="856" y="556">“Use this skill to train the Genesis model… upload pipeline.yaml</text>
+      <text x="856" y="572"> to the DSPA, submit a run, report whether it learned (w≈2,b≈1).”</text>
+      <text x="856" y="592" fill="#8aa0c4">+ bundled resource: pipeline.yaml (read when the skill runs)</text>
+    </g>
+    <text class="wl" x="1062" y="356" text-anchor="middle" style="fill:#7ee8c6">task needs it → load the full SKILL.md</text>
+
+    <!-- ===== FLOWING DOTS ===== -->
+    <g fill="var(--blue)" filter="url(#glow)">
+      <circle r="5"><animateMotion dur="1.5s" begin="0s" repeatCount="indefinite"><mpath href="#sK"/></animateMotion></circle>
+      <circle r="5"><animateMotion dur="1.3s" begin="0s" repeatCount="indefinite"><mpath href="#KQ"/></animateMotion></circle>
+    </g>
+    <g fill="var(--cyan)" filter="url(#glow)">
+      <circle r="5"><animateMotion dur="1.5s" begin="0s" repeatCount="indefinite"><mpath href="#QA"/></animateMotion></circle>
+      <circle r="5"><animateMotion dur="1.8s" begin="0s" repeatCount="indefinite"><mpath href="#AO"/></animateMotion></circle>
+    </g>
+    <g fill="var(--gold)" filter="url(#glow)">
+      <circle r="5.5"><animateMotion dur="3s" begin="0s"   repeatCount="indefinite"><mpath href="#OM"/></animateMotion></circle>
+      <circle r="5.5"><animateMotion dur="3s" begin="1.5s" repeatCount="indefinite"><mpath href="#OM"/></animateMotion></circle>
+    </g>
+    <!-- on-demand load: green pulse from catalog skill into context -->
+    <g fill="var(--green)" filter="url(#glow)">
+      <circle r="6"><animateMotion dur="2.6s" begin="0s"   repeatCount="indefinite"><mpath href="#DL"/></animateMotion></circle>
+      <circle r="6"><animateMotion dur="2.6s" begin="1.3s" repeatCount="indefinite"><mpath href="#DL"/></animateMotion></circle>
+    </g>
+  </svg>
+  </div>
+
+  <div class="legend">
+    <span class="chip"><span class="sw" style="color:var(--blue)"></span><b>build &amp; store</b> — Konflux → Quay (OCI image)</span>
+    <span class="chip"><span class="sw" style="color:var(--cyan)"></span><b>reference &amp; mount</b> — operator declares the image volume</span>
+    <span class="chip"><span class="sw" style="color:var(--gold)"></span><b>read-only image volume</b> — /skills-catalog</span>
+    <span class="chip"><span class="sw" style="color:var(--green)"></span><b>discover on demand</b> — load SKILL.md when needed</span>
+  </div>
+  <p class="key"><b>Versioned, read-only, lazy.</b> Skills are open SKILL.md folders baked into an OCI image by Konflux and pinned by tag on the AgentGateway. The operator mounts that image as a Kubernetes <b>image volume</b> — read-only, <b>not a PVC</b> (the workspace and KBs are the PVCs) — so every skill is present at near-zero cost. The agent keeps only a tiny index in its context and reads a skill’s full <b>SKILL.md</b> (and bundled files) <b>only when a task calls for it</b> — Anthropic-style progressive disclosure.</p>
+</div>
+</body>
+</html>

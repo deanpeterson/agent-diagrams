@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Genesis demo — the whole platform, animated</title>
+<style>
+  :root{
+    --bg:#0a0f1e; --ink:#e8eefc; --muted:#9fb0d0;
+    --cyan:#22d3ee; --blue:#60a5fa; --gold:#fbbf24; --green:#34d399; --rose:#fb7185; --violet:#a78bfa; --line:#27344e;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{background:radial-gradient(1500px 850px at 50% -8%, #14213f 0%, var(--bg) 60%) fixed;
+    color:var(--ink); font:16px/1.4 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Inter,Roboto,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100%; padding:24px;}
+  .wrap{width:min(1480px,98vw)}
+  h1{font-size:25px;font-weight:700;margin:0 0 3px}
+  h1 .a{color:var(--gold)}
+  .sub{color:var(--muted);font-size:14.5px;margin:0 0 14px}
+  .card{background:linear-gradient(180deg,rgba(20,33,63,.65),rgba(10,15,30,.65));
+    border:1px solid var(--line); border-radius:18px; padding:8px 10px 2px;
+    box-shadow:0 30px 80px -40px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.03);}
+  svg{width:100%;height:auto;display:block}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin:11px 4px 2px;color:var(--muted);font-size:13px}
+  .legend b{color:var(--ink);font-weight:600}
+  .chip{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:11px;height:11px;border-radius:50%;box-shadow:0 0 9px currentColor}
+  .key{margin-top:9px;color:var(--muted);font-size:14px}
+  .key b{color:var(--ink);font-weight:700}
+  text{font-family:inherit;fill:var(--ink)}
+  .nt{font-weight:700;font-size:14.5px}
+  .ns{font-size:11px;fill:var(--muted)}
+  .wl{font-size:11px;font-weight:600}
+  .lane{font-size:11.5px;font-weight:700;letter-spacing:.6px}
+  .box-os{fill:rgba(255,255,255,.012);stroke:rgba(124,142,178,.45)}
+  .box-op{fill:rgba(167,139,250,.045);stroke:rgba(167,139,250,.4);stroke-dasharray:5 6}
+  .box-cl{fill:rgba(34,211,238,.05);stroke:rgba(34,211,238,.45);stroke-dasharray:5 6}
+  .node{stroke-width:1.5}
+  .n-cy{fill:#10203f;stroke:rgba(34,211,238,.5)}
+  .n-bl{fill:#0f1d3a;stroke:rgba(96,165,250,.55)}
+  .n-gd{fill:#1b1c2e;stroke:rgba(251,191,36,.5)}
+  .n-ag{fill:#141d36;stroke:rgba(167,139,250,.6)}
+  .n-gi{fill:#0f1c39;stroke:rgba(167,139,250,.5)}
+  .n-cl{fill:#0c2030;stroke:rgba(34,211,238,.55)}
+  .n-ai{fill:#10203a;stroke:rgba(52,211,153,.5)}
+  .n-ml{fill:#0e2230;stroke:rgba(52,211,153,.5)}
+  .n-mm{fill:#1a1430;stroke:rgba(251,113,133,.55)}
+  .n-gr{fill:#101a30;stroke:rgba(167,139,250,.32)}
+  .wire{fill:none;stroke-width:2}
+  .w-cyan{stroke:rgba(34,211,238,.30)} .w-blue{stroke:rgba(96,165,250,.32)}
+  .w-gold{stroke:rgba(251,191,36,.32);stroke-dasharray:3 7} .w-violet{stroke:rgba(167,139,250,.32)}
+  .w-green{stroke:rgba(52,211,153,.32)} .w-rose{stroke:rgba(251,113,133,.32)} .w-grnd{stroke:rgba(167,139,250,.2)}
+  .badge{font-weight:800;font-size:12px;fill:#0a0f1e}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>One platform: a web form becomes agents that <span class="a">plan, work, train a model, and talk back</span></h1>
+  <p class="sub">The whole Genesis demo — on OpenShift: built by Konflux, reconciled by the operator, governed by Connectivity Link, grounded in skills + knowledge bases</p>
+
+  <div class="card">
+  <svg viewBox="0 0 1480 980" role="img" aria-label="Complete animated architecture of the Genesis agent platform demo on OpenShift">
+    <defs>
+      <filter id="glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+
+    <!-- ===== OpenShift (everything runs here) ===== -->
+    <rect class="box-os" x="16" y="40" width="1448" height="912" rx="22"/>
+    <text class="lane" x="44" y="66" style="fill:#aab9d8">RED HAT OPENSHIFT</text>
+
+    <!-- ===== WIRES ===== -->
+    <path id="bKQ" class="wire w-blue"   d="M 670,122 L 712,122"/>
+    <path id="bQP" class="wire w-blue"   d="M 800,158 C 800,230 700,270 648,300"/>
+    <path id="c1"  class="wire w-cyan"   d="M 116,304 L 138,338"/>
+    <path id="c2"  class="wire w-cyan"   d="M 164,422 L 164,470"/>
+    <path id="c3"  class="wire w-cyan"   d="M 276,512 C 360,506 420,476 478,456"/>
+    <path id="g1"  class="wire w-gold"   d="M 379,372 L 379,406"/>
+    <path id="g2"  class="wire w-gold"   d="M 454,438 C 540,452 560,610 612,650"/>
+    <path id="gr1" class="wire w-grnd"   d="M 650,452 L 672,452"/>
+    <path id="gr2" class="wire w-grnd"   d="M 650,526 C 664,512 664,478 672,470"/>
+    <path id="aCL" class="wire w-violet" d="M 760,502 L 760,628"/>
+    <path id="clG" class="wire w-violet" d="M 928,648 C 992,600 992,360 1010,300"/>
+    <path id="wT"  class="wire w-green"  d="M 884,470 C 940,478 970,478 1010,476"/>
+    <path id="wM"  class="wire w-green"  d="M 1132,522 C 1132,544 1132,548 1132,566"/>
+    <path id="wC"  class="wire w-rose"   d="M 612,548 C 520,580 470,700 446,742"/>
+
+    <!-- ===== SUPPLY CHAIN (build) ===== -->
+    <text class="lane" x="470" y="100" style="fill:#8fb3f6">SUPPLY CHAIN</text>
+    <g filter="url(#soft)"><rect class="node n-bl" x="470" y="110" width="200" height="68" rx="12"/></g>
+    <text class="nt" x="570" y="138" text-anchor="middle">Konflux</text>
+    <text class="ns" x="570" y="156" text-anchor="middle">Pipelines-as-Code build</text>
+    <g filter="url(#soft)"><rect class="node n-bl" x="712" y="110" width="176" height="68" rx="12"/></g>
+    <text class="nt" x="800" y="138" text-anchor="middle">Quay</text>
+    <text class="ns" x="800" y="156" text-anchor="middle">image registry</text>
+    <text class="wl" x="812" y="250" style="fill:#9cc3f8">images → operator · agents · plugins</text>
+
+    <!-- ===== COMPOSE / PROVISION (left) ===== -->
+    <g filter="url(#soft)"><rect class="node n-cy" x="52" y="250" width="128" height="54" rx="11"/></g>
+    <text class="nt" x="116" y="277" text-anchor="middle">You</text>
+    <text class="ns" x="116" y="294" text-anchor="middle">platform engineer</text>
+    <g filter="url(#soft)"><rect class="node n-cy" x="52" y="338" width="224" height="84" rx="12"/></g>
+    <text class="nt" x="164" y="367" text-anchor="middle">Red Hat Developer Hub</text>
+    <text class="ns" x="164" y="385" text-anchor="middle">AgentComposer binder</text>
+    <text class="ns" x="164" y="402" text-anchor="middle" style="fill:#7fd9ec">pick KBs · skills · MCP — a form, not YAML</text>
+    <g><circle cx="70" cy="344" r="13" fill="var(--cyan)" filter="url(#glow)"/><text class="badge" x="70" y="349" text-anchor="middle">1</text></g>
+    <g filter="url(#soft)"><rect class="node n-cy" x="52" y="470" width="224" height="84" rx="12"/></g>
+    <text class="nt" x="164" y="500" text-anchor="middle">GitOps</text>
+    <text class="ns" x="164" y="519" text-anchor="middle">desired state in Git → ArgoCD syncs</text>
+    <text class="ns" x="164" y="536" text-anchor="middle" style="fill:#7fd9ec">every change is a reviewable PR</text>
+    <g><circle cx="70" cy="476" r="13" fill="var(--cyan)" filter="url(#glow)"/><text class="badge" x="70" y="481" text-anchor="middle">2</text></g>
+    <text class="wl" x="300" y="470" style="fill:#7fd9ec">operator reconciles ▸</text>
+
+    <!-- ===== ZERO STANDING CREDS (governance supply) ===== -->
+    <text class="lane" x="304" y="312" style="fill:#d9b25e">ZERO STANDING CREDS</text>
+    <g filter="url(#soft)"><rect class="node n-gd" x="304" y="322" width="150" height="56" rx="11"/></g>
+    <text class="nt" x="379" y="347" text-anchor="middle">HashiCorp Vault</text>
+    <text class="ns" x="379" y="365" text-anchor="middle">GitHub App key</text>
+    <g filter="url(#soft)"><rect class="node n-gd" x="304" y="406" width="150" height="62" rx="11"/></g>
+    <text class="nt" x="379" y="433" text-anchor="middle">External Secrets</text>
+    <text class="ns" x="379" y="451" text-anchor="middle">↻ rotates every 30 min</text>
+    <text class="wl" x="468" y="556" style="fill:var(--gold)">rotated credential</text>
+    <text class="wl" x="468" y="572" style="fill:var(--gold)">injected at the gateway</text>
+
+    <!-- ===== OPERATOR box (manages agents + KBs + skills) ===== -->
+    <rect class="box-op" x="478" y="300" width="424" height="276" rx="18"/>
+    <text class="lane" x="496" y="324" style="fill:#c4b3fb;letter-spacing:.3px">AGENT-OFFICE OPERATOR — reconciles the AgentWorkstations</text>
+    <g filter="url(#soft)"><rect class="node n-ag" x="672" y="336" width="212" height="70" rx="13"/></g>
+    <text class="nt" x="778" y="366" text-anchor="middle">Genesis PM agent</text>
+    <text class="ns" x="778" y="384" text-anchor="middle">plans · decomposes tasks</text>
+    <g><circle cx="690" cy="342" r="13" fill="var(--violet)" filter="url(#glow)"/><text class="badge" x="690" y="347" text-anchor="middle">3</text></g>
+    <g filter="url(#soft)"><rect class="node n-ag" x="672" y="430" width="212" height="74" rx="13"/></g>
+    <text class="nt" x="778" y="460" text-anchor="middle">Genesis Worker agent</text>
+    <text class="ns" x="778" y="478" text-anchor="middle">does the work · trains the model</text>
+    <g><circle cx="690" cy="436" r="13" fill="var(--violet)" filter="url(#glow)"/><text class="badge" x="690" y="441" text-anchor="middle">4</text></g>
+    <g filter="url(#soft)"><rect class="node n-gr" x="500" y="424" width="150" height="56" rx="11"/></g>
+    <text class="nt" x="575" y="448" text-anchor="middle" style="font-size:13px">Knowledge Bases</text>
+    <text class="ns" x="575" y="466" text-anchor="middle">first-principles wiki</text>
+    <g filter="url(#soft)"><rect class="node n-gr" x="500" y="498" width="150" height="54" rx="11"/></g>
+    <text class="nt" x="575" y="521" text-anchor="middle" style="font-size:13px">Skills</text>
+    <text class="ns" x="575" y="539" text-anchor="middle">auto-discovered catalog</text>
+
+    <!-- ===== CONNECTIVITY LINK box (just the gateway machinery) ===== -->
+    <rect class="box-cl" x="598" y="592" width="346" height="104" rx="16"/>
+    <text class="lane" x="614" y="614" style="fill:#7fd9ec">RED HAT CONNECTIVITY LINK · MCP GATEWAY</text>
+    <g filter="url(#soft)"><rect class="node n-cl" x="614" y="626" width="314" height="54" rx="11"/></g>
+    <text class="nt" x="771" y="650" text-anchor="middle" style="font-size:13.5px">MCPServerRegistration + AuthPolicy</text>
+    <text class="ns" x="771" y="668" text-anchor="middle">→ github-mcp-server · injects the rotated cred</text>
+    <text class="wl" x="640" y="556" style="fill:#bfa9fb">tool calls, as the App identity</text>
+
+    <!-- ===== WORK — GitHub board ===== -->
+    <g filter="url(#soft)"><rect class="node n-gi" x="1010" y="150" width="424" height="238" rx="14"/></g>
+    <text class="nt" x="1222" y="178" text-anchor="middle">GitHub — “Genesis Model” board</text>
+    <g>
+      <rect x="1028" y="196" width="126" height="170" rx="9" fill="rgba(167,139,250,.06)" stroke="rgba(167,139,250,.25)"/>
+      <rect x="1162" y="196" width="126" height="170" rx="9" fill="rgba(167,139,250,.06)" stroke="rgba(167,139,250,.25)"/>
+      <rect x="1296" y="196" width="126" height="170" rx="9" fill="rgba(52,211,153,.07)" stroke="rgba(52,211,153,.3)"/>
+      <text class="ns" x="1091" y="216" text-anchor="middle">To do</text>
+      <text class="ns" x="1225" y="216" text-anchor="middle">In progress</text>
+      <text class="ns" x="1359" y="216" text-anchor="middle" style="fill:#7ee8c6">Done</text>
+      <rect x="1040" y="228" width="102" height="18" rx="5" fill="rgba(167,139,250,.22)"/>
+      <rect x="1040" y="254" width="102" height="18" rx="5" fill="rgba(167,139,250,.22)"/>
+      <rect x="1040" y="280" width="102" height="18" rx="5" fill="rgba(167,139,250,.18)"/>
+      <rect x="1308" y="228" width="102" height="18" rx="5" fill="rgba(52,211,153,.28)"/>
+      <rect x="1308" y="254" width="102" height="18" rx="5" fill="rgba(52,211,153,.22)"/>
+      <rect y="228" width="102" height="18" rx="5" fill="var(--violet)" filter="url(#glow)">
+        <animate attributeName="x" values="1174;1174;1308;1308" keyTimes="0;.35;.6;1" dur="5s" repeatCount="indefinite"/>
+        <animate attributeName="fill" values="#a78bfa;#a78bfa;#34d399;#34d399" keyTimes="0;.55;.62;1" dur="5s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+    <text class="ns" x="1222" y="378" text-anchor="middle">6 first-principles issues · deliverables pushed to docs/</text>
+
+    <!-- ===== TRAIN — OpenShift AI + MLflow ===== -->
+    <g filter="url(#soft)"><rect class="node n-ai" x="1010" y="430" width="244" height="92" rx="13"/></g>
+    <text class="nt" x="1132" y="460" text-anchor="middle">OpenShift AI — Data Science Pipeline</text>
+    <text class="ns" x="1132" y="479" text-anchor="middle">generate_data → train_gd → evaluate</text>
+    <text class="ns" x="1132" y="497" text-anchor="middle" style="fill:#fcd57a">green only if it recovers w≈2, b≈1</text>
+    <g><circle cx="1028" cy="436" r="13" fill="var(--green)" filter="url(#glow)"/><text class="badge" x="1028" y="441" text-anchor="middle">5</text></g>
+    <text class="wl" x="900" y="452" style="fill:#7ee8c6">genesis-train skill</text>
+    <g filter="url(#soft)"><rect class="node n-ml" x="1010" y="566" width="424" height="166" rx="14"/></g>
+    <text class="nt" x="1222" y="594" text-anchor="middle">MLflow — loss curve</text>
+    <line x1="1050" y1="612" x2="1050" y2="700" stroke="rgba(159,176,208,.35)"/>
+    <line x1="1050" y1="700" x2="1410" y2="700" stroke="rgba(159,176,208,.35)"/>
+    <path id="loss" d="M 1052,618 C 1120,618 1150,690 1222,694 C 1300,698 1340,696 1408,696" fill="none" stroke="var(--green)" stroke-width="2.5" filter="url(#glow)"/>
+    <circle r="5.5" fill="var(--green)" filter="url(#glow)"><animateMotion dur="3.4s" repeatCount="indefinite"><mpath href="#loss"/></animateMotion></circle>
+    <text class="ns" x="1222" y="724" text-anchor="middle" style="fill:#7ee8c6">loss 13 → 0.2 · w → 2 · b → 1 — it provably learned</text>
+
+    <!-- ===== CHAT — Mattermost ===== -->
+    <g filter="url(#soft)"><rect class="node n-mm" x="190" y="742" width="356" height="124" rx="14"/></g>
+    <text class="nt" x="368" y="772" text-anchor="middle">Mattermost — chat with your agents</text>
+    <rect x="212" y="788" width="170" height="26" rx="9" fill="rgba(251,113,133,.16)" stroke="rgba(251,113,133,.4)"/>
+    <text class="ns" x="222" y="805" text-anchor="start">“status of the board?”</text>
+    <rect x="360" y="824" width="170" height="26" rx="9" fill="rgba(52,211,153,.14)" stroke="rgba(52,211,153,.4)"/>
+    <text class="ns" x="370" y="841" text-anchor="start" style="fill:#7ee8c6">@genesis-pm replies ●</text>
+    <g><circle cx="208" cy="748" r="13" fill="var(--rose)" filter="url(#glow)"/><text class="badge" x="208" y="753" text-anchor="middle">6</text></g>
+    <text class="wl" x="430" y="700" style="fill:#f6a6b2">you ↔ agents, as themselves (mm-bridge)</text>
+
+    <!-- ===== FLOWING DOTS ===== -->
+    <g fill="var(--blue)" filter="url(#glow)">
+      <circle r="5"><animateMotion dur="1.4s" begin="0s" repeatCount="indefinite"><mpath href="#bKQ"/></animateMotion></circle>
+      <circle r="5.5"><animateMotion dur="2.8s" begin="0s"   repeatCount="indefinite"><mpath href="#bQP"/></animateMotion></circle>
+      <circle r="5.5"><animateMotion dur="2.8s" begin="1.4s" repeatCount="indefinite"><mpath href="#bQP"/></animateMotion></circle>
+    </g>
+    <g fill="var(--cyan)" filter="url(#glow)">
+      <circle r="5"><animateMotion dur="1.3s" begin="0s" repeatCount="indefinite"><mpath href="#c1"/></animateMotion></circle>
+      <circle r="5"><animateMotion dur="1.6s" begin="0s" repeatCount="indefinite"><mpath href="#c2"/></animateMotion></circle>
+      <circle r="5.5"><animateMotion dur="2.6s" begin="0s"   repeatCount="indefinite"><mpath href="#c3"/></animateMotion></circle>
+      <circle r="5.5"><animateMotion dur="2.6s" begin="1.3s" repeatCount="indefinite"><mpath href="#c3"/></animateMotion></circle>
+    </g>
+    <g fill="var(--gold)" filter="url(#glow)">
+      <circle r="5"><animateMotion dur="1.6s" begin="0s" repeatCount="indefinite"><mpath href="#g1"/></animateMotion></circle>
+      <circle r="5.5"><animateMotion dur="3.2s" begin="0s"   repeatCount="indefinite"><mpath href="#g2"/></animateMotion></circle>
+      <circle r="5.5"><animateMotion dur="3.2s" begin="1.6s" repeatCount="indefinite"><mpath href="#g2"/></animateMotion></circle>
+    </g>
+    <g fill="var(--violet)" filter="url(#glow)">
+      <circle r="4"><animateMotion dur="2s" begin="0s" repeatCount="indefinite"><mpath href="#gr1"/></animateMotion></circle>
+      <circle r="4"><animateMotion dur="2.2s" begin="0s" repeatCount="indefinite"><mpath href="#gr2"/></animateMotion></circle>
+      <circle r="5.5"><animateMotion dur="2.6s" begin="0s"   repeatCount="indefinite"><mpath href="#aCL"/></animateMotion></circle>
+      <circle r="5.5"><animateMotion dur="2.6s" begin="1.3s" repeatCount="indefinite"><mpath href="#aCL"/></animateMotion></circle>
+      <circle r="5.5"><animateMotion dur="3.2s" begin="0s"   repeatCount="indefinite"><mpath href="#clG"/></animateMotion></circle>
+      <circle r="5.5"><animateMotion dur="3.2s" begin="1.6s" repeatCount="indefinite"><mpath href="#clG"/></animateMotion></circle>
+    </g>
+    <g fill="var(--green)" filter="url(#glow)">
+      <circle r="5.5"><animateMotion dur="2.4s" begin="0s"   repeatCount="indefinite"><mpath href="#wT"/></animateMotion></circle>
+      <circle r="5.5"><animateMotion dur="2.4s" begin="1.2s" repeatCount="indefinite"><mpath href="#wT"/></animateMotion></circle>
+      <circle r="5"><animateMotion dur="1.6s" begin="0s" repeatCount="indefinite"><mpath href="#wM"/></animateMotion></circle>
+    </g>
+    <g fill="var(--rose)" filter="url(#glow)">
+      <circle r="5"><animateMotion dur="2.8s" begin="0s"   repeatCount="indefinite"><mpath href="#wC"/></animateMotion></circle>
+      <circle r="5"><animateMotion dur="2.8s" begin="1.4s" repeatCount="indefinite"><mpath href="#wC"/></animateMotion></circle>
+    </g>
+  </svg>
+  </div>
+
+  <div class="legend">
+    <span class="chip"><span class="sw" style="color:var(--blue)"></span><b>build</b> — Konflux → Quay</span>
+    <span class="chip"><span class="sw" style="color:var(--cyan)"></span><b>compose &amp; provision</b></span>
+    <span class="chip"><span class="sw" style="color:var(--gold)"></span><b>rotated credential</b> — Vault → ESO</span>
+    <span class="chip"><span class="sw" style="color:var(--violet)"></span><b>plan &amp; work</b> — via the gateway → GitHub</span>
+    <span class="chip"><span class="sw" style="color:var(--green)"></span><b>train &amp; learn</b> — OpenShift AI · MLflow</span>
+    <span class="chip"><span class="sw" style="color:var(--rose)"></span><b>chat</b> — Mattermost</span>
+  </div>
+  <p class="key"><b>Self-service on top, guardrails underneath — all on OpenShift.</b> Every image is built by Konflux; a Dev Hub form becomes desired state in Git that ArgoCD + the <b>operator</b> reconcile into the agents + knowledge bases; the agents act through <b>Connectivity Link</b>’s governed gateway with a credential that rotates every 30 min and that they never hold — planning a board, doing the work, training a model that provably learns, and answering you in chat. Reversible by deletion, and the whole flow is the genesis-e2e test suite.</p>
+</div>
+</body>
+</html>

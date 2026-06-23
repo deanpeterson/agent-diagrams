@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>OpenShift AI — Data Science Pipelines × MLflow (animated)</title>
+<style>
+  :root{--bg:#0a0f1e;--ink:#e8eefc;--muted:#9fb0d0;--cyan:#22d3ee;--blue:#60a5fa;--gold:#fbbf24;--green:#34d399;--violet:#a78bfa;--line:#27344e;}
+  *{box-sizing:border-box} html,body{margin:0;height:100%}
+  body{background:radial-gradient(1400px 800px at 50% -8%,#14213f 0%,var(--bg) 60%) fixed;color:var(--ink);
+    font:16px/1.4 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Inter,Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;padding:24px;}
+  .wrap{width:min(1340px,98vw)}
+  h1{font-size:25px;font-weight:700;margin:0 0 3px} h1 .a{color:var(--gold)}
+  .sub{color:var(--muted);font-size:14.5px;margin:0 0 14px}
+  .card{background:linear-gradient(180deg,rgba(20,33,63,.65),rgba(10,15,30,.65));border:1px solid var(--line);border-radius:18px;
+    padding:8px 10px 2px;box-shadow:0 30px 80px -40px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.03);}
+  svg{width:100%;height:auto;display:block}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;align-items:center;margin:11px 4px 2px;color:var(--muted);font-size:13px}
+  .legend b{color:var(--ink);font-weight:600} .chip{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:11px;height:11px;border-radius:50%;box-shadow:0 0 9px currentColor}
+  .key{margin-top:9px;color:var(--muted);font-size:14px} .key b{color:var(--ink);font-weight:700}
+  text{font-family:inherit;fill:var(--ink)}
+  .nt{font-weight:700;font-size:14.5px} .ns{font-size:11px;fill:var(--muted)} .wl{font-size:11px;font-weight:600}
+  .lane{font-size:11.5px;font-weight:700;letter-spacing:.5px}
+  .box-os{fill:rgba(255,255,255,.012);stroke:rgba(124,142,178,.45)}
+  .band-dsp{fill:rgba(34,211,238,.045);stroke:rgba(34,211,238,.38);stroke-dasharray:5 6}
+  .band-ml{fill:rgba(52,211,153,.05);stroke:rgba(52,211,153,.4);stroke-dasharray:5 6}
+  .node{stroke-width:1.5}
+  .n-vi{fill:#141d36;stroke:rgba(167,139,250,.55)} .n-cy{fill:#10203f;stroke:rgba(34,211,238,.5)}
+  .n-hot{fill:#1b1c2e;stroke:rgba(251,191,36,.65)} .n-gate{fill:#0e2230;stroke:rgba(52,211,153,.6)} .n-ml{fill:#0e2230;stroke:rgba(52,211,153,.5)}
+  .wire{fill:none;stroke-width:2}
+  .w-cyan{stroke:rgba(34,211,238,.3)} .w-gold{stroke:rgba(251,191,36,.34)} .w-green{stroke:rgba(52,211,153,.32)}
+  .badge{font-weight:800;font-size:12px;fill:#0a0f1e}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>OpenShift AI: <span class="a">Data Science Pipelines orchestrate, MLflow observes</span></h1>
+  <p class="sub">The pipeline runs the training and gates pass/fail; the training step streams its metrics to MLflow live — two complementary services</p>
+
+  <div class="card">
+  <svg viewBox="0 0 1340 752" role="img" aria-label="Animated relationship between OpenShift AI Data Science Pipelines and MLflow">
+    <defs>
+      <filter id="glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+
+    <!-- OpenShift AI frame -->
+    <rect class="box-os" x="22" y="86" width="1296" height="632" rx="22"/>
+    <text class="lane" x="48" y="112" style="fill:#aab9d8">RED HAT OPENSHIFT AI</text>
+
+    <!-- ===== WIRES ===== -->
+    <path id="tr" class="wire w-cyan"  d="M 250,360 C 290,344 300,250 314,226"/>
+    <path id="d1" class="wire w-cyan"  d="M 508,226 L 560,226"/>
+    <path id="d2" class="wire w-cyan"  d="M 802,226 L 854,226"/>
+    <path id="br" class="wire w-gold"  d="M 682,280 C 682,360 660,430 632,470"/>
+    <path id="lc" class="wire w-green" d="M 762,560 L 808,560"/>
+
+    <!-- ===== trigger ===== -->
+    <g filter="url(#soft)"><rect class="node n-vi" x="52" y="316" width="198" height="98" rx="13"/></g>
+    <text class="nt" x="151" y="346" text-anchor="middle">Genesis Worker</text>
+    <text class="ns" x="151" y="364" text-anchor="middle">runs the genesis-train skill</text>
+    <text class="ns" x="151" y="382" text-anchor="middle" style="fill:#c9b8fb">uploads pipeline.yaml · submits a run</text>
+    <text class="wl" x="262" y="298" style="fill:#7fd9ec">submit run (KFP API + SA token)</text>
+
+    <!-- ===== BAND 1 — Data Science Pipelines ===== -->
+    <rect class="band-dsp" x="286" y="134" width="1010" height="214" rx="16"/>
+    <text class="lane" x="306" y="158" style="fill:#7fd9ec">OPENSHIFT AI · DATA SCIENCE PIPELINES (DSPA) — orchestrates the run, gates pass/fail</text>
+    <g filter="url(#soft)"><rect class="node n-cy" x="314" y="186" width="194" height="80" rx="12"/></g>
+    <text class="nt" x="411" y="214" text-anchor="middle">generate_data</text>
+    <text class="ns" x="411" y="232" text-anchor="middle">y = 2x + 1 + noise</text>
+    <text class="ns" x="411" y="249" text-anchor="middle">train / test split</text>
+    <g filter="url(#soft)"><rect class="node n-hot" x="560" y="178" width="242" height="98" rx="12"/></g>
+    <text class="nt" x="681" y="206" text-anchor="middle" style="fill:#f6d488">train_gd</text>
+    <text class="ns" x="681" y="224" text-anchor="middle">hand-written gradient descent</text>
+    <text class="ns" x="681" y="241" text-anchor="middle">each epoch: loss · w · b</text>
+    <text class="ns" x="681" y="259" text-anchor="middle" style="fill:#bcae8f">w −= lr·dw   b −= lr·db</text>
+    <g filter="url(#soft)"><rect class="node n-gate" x="854" y="186" width="220" height="80" rx="12"/></g>
+    <text class="nt" x="964" y="212" text-anchor="middle">evaluate</text>
+    <text class="ns" x="964" y="230" text-anchor="middle" style="fill:#7ee8c6">GATE — fails unless</text>
+    <text class="ns" x="964" y="247" text-anchor="middle" style="fill:#7ee8c6">w≈2, b≈1 (|err|&lt;0.25)</text>
+    <text class="ns" x="1098" y="222" style="fill:#7ee8c6;font-weight:700">SUCCEEDED</text>
+    <text class="ns" x="1098" y="239" style="fill:var(--muted)">⇒ it provably learned</text>
+    <text class="ns" x="306" y="334" style="fill:var(--muted)">KFP v2 API · Argo workflow controller · MLMD / MariaDB · MinIO artifacts — visible in the OpenShift AI “Pipelines → Runs” graph</text>
+
+    <!-- ===== BAND 2 — MLflow ===== -->
+    <rect class="band-ml" x="466" y="404" width="830" height="262" rx="16"/>
+    <text class="lane" x="486" y="428" style="fill:#7ee8c6">OPENSHIFT AI · MLflow — records the metrics, draws the loss curve</text>
+    <g filter="url(#soft)"><rect class="node n-ml" x="492" y="450" width="252" height="84" rx="12"/></g>
+    <text class="nt" x="618" y="478" text-anchor="middle">experiment: genesis-model</text>
+    <text class="ns" x="618" y="496" text-anchor="middle">run: genesis-gd</text>
+    <text class="ns" x="618" y="514" text-anchor="middle" style="fill:#7ee8c6">params: epochs 300 · lr 0.05</text>
+    <!-- loss curve chart -->
+    <text class="ns" x="808" y="470" style="fill:var(--muted)">loss curve (live)</text>
+    <line x1="808" y1="486" x2="808" y2="612" stroke="rgba(159,176,208,.35)"/>
+    <line x1="808" y1="612" x2="1270" y2="612" stroke="rgba(159,176,208,.35)"/>
+    <path id="loss" d="M 812,492 C 900,492 940,600 1040,606 C 1150,612 1200,610 1268,610" fill="none" stroke="var(--green)" stroke-width="2.5" filter="url(#glow)"/>
+    <circle r="5.5" fill="var(--green)" filter="url(#glow)"><animateMotion dur="3.4s" repeatCount="indefinite"><mpath href="#loss"/></animateMotion></circle>
+    <text class="ns" x="1040" y="640" text-anchor="middle" style="fill:#7ee8c6">loss 13 → 0.2 · w → 2 · b → 1 — watch it learn, epoch by epoch</text>
+
+    <!-- ===== THE BRIDGE label ===== -->
+    <text class="wl" x="694" y="356" style="fill:var(--gold)">mlflow.log_metric(loss, w, b, step=epoch)</text>
+    <text class="wl" x="694" y="372" style="fill:var(--gold)">every epoch · auth: X-MLFLOW-WORKSPACE + SA token</text>
+
+    <!-- ===== FLOWING DOTS ===== -->
+    <g fill="var(--cyan)" filter="url(#glow)">
+      <circle r="5"><animateMotion dur="1.8s" begin="0s" repeatCount="indefinite"><mpath href="#tr"/></animateMotion></circle>
+      <circle r="5"><animateMotion dur="1.3s" begin="0s" repeatCount="indefinite"><mpath href="#d1"/></animateMotion></circle>
+      <circle r="5"><animateMotion dur="1.3s" begin="0s" repeatCount="indefinite"><mpath href="#d2"/></animateMotion></circle>
+    </g>
+    <!-- the bridge: metrics streaming train_gd -> MLflow -->
+    <g fill="var(--gold)" filter="url(#glow)">
+      <circle r="5.5"><animateMotion dur="2.4s" begin="0s"   repeatCount="indefinite"><mpath href="#br"/></animateMotion></circle>
+      <circle r="5.5"><animateMotion dur="2.4s" begin="0.8s" repeatCount="indefinite"><mpath href="#br"/></animateMotion></circle>
+      <circle r="5.5"><animateMotion dur="2.4s" begin="1.6s" repeatCount="indefinite"><mpath href="#br"/></animateMotion></circle>
+    </g>
+    <g fill="var(--green)" filter="url(#glow)">
+      <circle r="5"><animateMotion dur="1.4s" begin="0s" repeatCount="indefinite"><mpath href="#lc"/></animateMotion></circle>
+    </g>
+  </svg>
+  </div>
+
+  <div class="legend">
+    <span class="chip"><span class="sw" style="color:var(--cyan)"></span><b>orchestration</b> — DSP runs generate → train → evaluate</span>
+    <span class="chip"><span class="sw" style="color:var(--gold)"></span><b>live metrics</b> — train_gd logs to MLflow each epoch</span>
+    <span class="chip"><span class="sw" style="color:var(--green)"></span><b>learned</b> — MLflow loss curve · the evaluate gate</span>
+  </div>
+  <p class="key"><b>One runs it, the other watches it learn.</b> Data Science Pipelines executes the DAG as Argo pods and <b>gates success</b> — the <code>evaluate</code> step fails the run unless the model recovers w≈2, b≈1, so a green run provably learned. While it runs, the <code>train_gd</code> step streams its metrics (loss, w, b) to <b>MLflow</b> every epoch — authenticated with the pipeline’s own identity — and MLflow draws the live loss curve. Two complementary OpenShift AI services, surfaced in the same dashboard.</p>
+</div>
+</body>
+</html>

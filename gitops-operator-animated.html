@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>GitOps → Operator → reality (animated)</title>
+<style>
+  :root{--bg:#0a0f1e;--ink:#e8eefc;--muted:#9fb0d0;--cyan:#22d3ee;--blue:#60a5fa;--gold:#fbbf24;--green:#34d399;--violet:#a78bfa;--line:#27344e;}
+  *{box-sizing:border-box} html,body{margin:0;height:100%}
+  body{background:radial-gradient(1400px 800px at 50% -8%,#14213f 0%,var(--bg) 60%) fixed;color:var(--ink);
+    font:16px/1.4 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Inter,Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;padding:24px;}
+  .wrap{width:min(1340px,98vw)}
+  h1{font-size:25px;font-weight:700;margin:0 0 3px} h1 .a{color:var(--gold)}
+  .sub{color:var(--muted);font-size:14.5px;margin:0 0 14px}
+  .card{background:linear-gradient(180deg,rgba(20,33,63,.65),rgba(10,15,30,.65));border:1px solid var(--line);border-radius:18px;
+    padding:8px 10px 2px;box-shadow:0 30px 80px -40px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.03);}
+  svg{width:100%;height:auto;display:block}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;align-items:center;margin:11px 4px 2px;color:var(--muted);font-size:13px}
+  .legend b{color:var(--ink);font-weight:600} .chip{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:11px;height:11px;border-radius:50%;box-shadow:0 0 9px currentColor}
+  .key{margin-top:9px;color:var(--muted);font-size:14px} .key b{color:var(--ink);font-weight:700}
+  text{font-family:inherit;fill:var(--ink)}
+  .nt{font-weight:700;font-size:14.5px} .ns{font-size:11px;fill:var(--muted)} .wl{font-size:11px;font-weight:600}
+  .lane{font-size:11.5px;font-weight:700;letter-spacing:.5px}
+  .box-os{fill:rgba(255,255,255,.012);stroke:rgba(124,142,178,.45)}
+  .zone-cr{fill:rgba(96,165,250,.05);stroke:rgba(96,165,250,.4);stroke-dasharray:5 6}
+  .node{stroke-width:1.5}
+  .n-git{fill:#1b1530;stroke:rgba(167,139,250,.55)} .n-argo{fill:#10203f;stroke:rgba(34,211,238,.55)}
+  .n-cr{fill:#0f1d3a;stroke:rgba(96,165,250,.55)} .n-op{fill:#0e2230;stroke:rgba(52,211,153,.6)} .n-real{fill:#13241d;stroke:rgba(52,211,153,.45)}
+  .wire{fill:none;stroke-width:2}
+  .w-violet{stroke:rgba(167,139,250,.32)} .w-cyan{stroke:rgba(34,211,238,.32)} .w-blue{stroke:rgba(96,165,250,.34)} .w-green{stroke:rgba(52,211,153,.34)}
+  .w-back{stroke-dasharray:2 7}
+  .badge{font-weight:800;font-size:12px;fill:#0a0f1e}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>GitOps + operator: <span class="a">desired state in Git becomes running reality</span></h1>
+  <p class="sub">ArgoCD keeps the cluster's CRs matching Git · the operator keeps reality matching the CRs — two continuous reconcile loops</p>
+
+  <div class="card">
+  <svg viewBox="0 0 1340 700" role="img" aria-label="Animated GitOps to operator to reality flow for the agent CRDs">
+    <defs>
+      <filter id="glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+
+    <!-- OpenShift cluster frame (Git/GitHub is outside it) -->
+    <rect class="box-os" x="278" y="86" width="1040" height="556" rx="22"/>
+    <text class="lane" x="304" y="112" style="fill:#aab9d8">RED HAT OPENSHIFT (cluster)</text>
+
+    <!-- ===== WIRES ===== -->
+    <path id="gA" class="wire w-cyan"  d="M 256,330 L 300,330"/>
+    <path id="AC" class="wire w-cyan"  d="M 524,330 C 540,330 548,360 562,360"/>
+    <path id="Aback" class="wire w-cyan w-back" d="M 560,300 C 548,288 540,310 524,310"/>
+    <path id="CO" class="wire w-blue"  d="M 840,300 C 856,300 860,330 876,330"/>
+    <path id="OR" class="wire w-green" d="M 992,360 C 992,374 992,378 992,388"/>
+    <path id="Oback" class="wire w-green w-back" d="M 1058,372 C 1110,380 1112,330 1098,320"/>
+    <path id="Ostat" class="wire w-green w-back" d="M 876,316 C 856,330 856,452 840,460"/>
+
+    <!-- ===== Git (desired state, external) ===== -->
+    <g filter="url(#soft)"><rect class="node n-git" x="40" y="232" width="216" height="198" rx="13"/></g>
+    <text class="nt" x="148" y="260" text-anchor="middle">Agent gitops repo</text>
+    <text class="ns" x="148" y="277" text-anchor="middle">…-agent-gitops · on GitHub</text>
+    <g font-size="10.5" fill="#c9b8fb">
+      <rect x="58" y="290" width="180" height="20" rx="5" fill="rgba(167,139,250,.14)" stroke="rgba(167,139,250,.4)"/><text x="66" y="304">base/agentgateway.yaml</text>
+      <rect x="58" y="316" width="180" height="20" rx="5" fill="rgba(167,139,250,.14)" stroke="rgba(167,139,250,.4)"/><text x="66" y="330">base/agentworkstation.yaml</text>
+      <rect x="58" y="342" width="180" height="20" rx="5" fill="rgba(167,139,250,.14)" stroke="rgba(167,139,250,.4)"/><text x="66" y="356">base/knowledgebase.yaml</text>
+    </g>
+    <text class="ns" x="148" y="386" text-anchor="middle" style="fill:#bda9f6">desired state · source of truth</text>
+    <text class="ns" x="148" y="404" text-anchor="middle" style="fill:#bda9f6">every change is a reviewable PR</text>
+
+    <!-- ===== ArgoCD ===== -->
+    <g filter="url(#soft)"><rect class="node n-argo" x="300" y="250" width="224" height="160" rx="13"/></g>
+    <text class="nt" x="412" y="280" text-anchor="middle">OpenShift GitOps · ArgoCD</text>
+    <text class="ns" x="412" y="299" text-anchor="middle">ApplicationSet (scmProvider)</text>
+    <text class="ns" x="412" y="316" text-anchor="middle">discovers *-agent-gitops</text>
+    <text class="ns" x="412" y="333" text-anchor="middle">→ one Application per agent</text>
+    <text class="ns" x="412" y="356" text-anchor="middle" style="fill:#7fd9ec">↻ syncs every 60s · re-applies on drift</text>
+    <text class="wl" x="266" y="318" style="fill:#7fd9ec">scan</text>
+
+    <!-- ===== CR instances zone ===== -->
+    <rect class="zone-cr" x="560" y="146" width="282" height="430" rx="16"/>
+    <text class="lane" x="576" y="170" style="fill:#9cc3f8">CR INSTANCES</text>
+    <text class="ns" x="576" y="186" style="fill:var(--muted)">validated against the agentoffice.ai CRDs (the types)</text>
+    <g filter="url(#soft)"><rect class="node n-cr" x="578" y="200" width="246" height="104" rx="12"/></g>
+    <text class="nt" x="701" y="228" text-anchor="middle" style="font-size:13.5px">AgentGateway</text>
+    <text class="ns" x="701" y="246" text-anchor="middle">research-gateway</text>
+    <text class="ns" x="701" y="264" text-anchor="middle">the governed runtime + skills image</text>
+    <g filter="url(#soft)"><rect class="node n-cr" x="578" y="318" width="246" height="104" rx="12"/></g>
+    <text class="nt" x="701" y="346" text-anchor="middle" style="font-size:13.5px">AgentWorkstation</text>
+    <text class="ns" x="701" y="364" text-anchor="middle">genesis-pm</text>
+    <text class="ns" x="701" y="382" text-anchor="middle">role · KBs · skills · gateway</text>
+    <g filter="url(#soft)"><rect class="node n-cr" x="578" y="436" width="246" height="104" rx="12"/></g>
+    <text class="nt" x="701" y="464" text-anchor="middle" style="font-size:13.5px">KnowledgeBase</text>
+    <text class="ns" x="701" y="482" text-anchor="middle">genesis-worker-wiki</text>
+    <text class="ns" x="701" y="500" text-anchor="middle">the wiki the agent learns from</text>
+
+    <!-- ===== Operator ===== -->
+    <g filter="url(#soft)"><rect class="node n-op" x="876" y="250" width="222" height="158" rx="13"/></g>
+    <text class="nt" x="987" y="280" text-anchor="middle">agent-office Operator</text>
+    <text class="ns" x="987" y="299" text-anchor="middle">controller-manager</text>
+    <text class="ns" x="987" y="316" text-anchor="middle">watches the CRs → reconciles</text>
+    <text class="ns" x="987" y="354" text-anchor="middle" style="fill:#7ee8c6">↻ reconciles continuously</text>
+    <text class="ns" x="987" y="371" text-anchor="middle" style="fill:#7ee8c6">re-reconciles on drift</text>
+    <text class="wl" x="850" y="296" style="fill:#9cc3f8">watch</text>
+    <text class="wl" x="700" y="556" text-anchor="middle" style="fill:#7ee8c6">writes status back · phase = Running</text>
+
+    <!-- ===== Reconciled reality ===== -->
+    <g filter="url(#soft)"><rect class="node n-real" x="876" y="412" width="412" height="190" rx="14"/></g>
+    <text class="lane" x="896" y="436" style="fill:#7ee8c6">RECONCILED REALITY — what OpenShift actually runs</text>
+    <g font-size="10.5" fill="#cfeede">
+      <rect x="896" y="448" width="186" height="34" rx="7" fill="rgba(52,211,153,.12)" stroke="rgba(52,211,153,.35)"/><text x="906" y="461">gateway pod · openclaw</text><text x="906" y="474" font-size="9" fill="#8fcdb2">+ skills image-volume (ro)</text>
+      <rect x="1094" y="448" width="180" height="34" rx="7" fill="rgba(52,211,153,.12)" stroke="rgba(52,211,153,.35)"/><text x="1104" y="461">KnowledgeBase PVC</text><text x="1104" y="474" font-size="9" fill="#8fcdb2">gitMirror of the wiki</text>
+      <rect x="896" y="492" width="186" height="34" rx="7" fill="rgba(52,211,153,.12)" stroke="rgba(52,211,153,.35)"/><text x="906" y="505">Mattermost @genesis-pm</text><text x="906" y="518" font-size="9" fill="#8fcdb2">+ #channel, provisioned</text>
+      <rect x="1094" y="492" width="180" height="34" rx="7" fill="rgba(52,211,153,.12)" stroke="rgba(52,211,153,.35)"/><text x="1104" y="505">gateway registration</text><text x="1104" y="518" font-size="9" fill="#8fcdb2">agent joins its gateway</text>
+      <text x="896" y="548" fill="#7ee8c6">Delete the repo → ArgoCD prunes the CRs → the operator's finalizer tears all of this down · no orphans.</text>
+    </g>
+
+    <!-- ===== FLOWING DOTS ===== -->
+    <g fill="var(--cyan)" filter="url(#glow)">
+      <circle r="5"><animateMotion dur="1.4s" begin="0s" repeatCount="indefinite"><mpath href="#gA"/></animateMotion></circle>
+      <circle r="5.5"><animateMotion dur="2s" begin="0s"   repeatCount="indefinite"><mpath href="#AC"/></animateMotion></circle>
+      <circle r="5.5"><animateMotion dur="2s" begin="1s"   repeatCount="indefinite"><mpath href="#AC"/></animateMotion></circle>
+      <circle r="3.5"><animateMotion dur="2.4s" begin="0s" repeatCount="indefinite"><mpath href="#Aback"/></animateMotion></circle>
+    </g>
+    <g fill="var(--blue)" filter="url(#glow)">
+      <circle r="5"><animateMotion dur="1.6s" begin="0s" repeatCount="indefinite"><mpath href="#CO"/></animateMotion></circle>
+    </g>
+    <g fill="var(--green)" filter="url(#glow)">
+      <circle r="5.5"><animateMotion dur="1.5s" begin="0s"  repeatCount="indefinite"><mpath href="#OR"/></animateMotion></circle>
+      <circle r="3.5"><animateMotion dur="2.6s" begin="0s"  repeatCount="indefinite"><mpath href="#Oback"/></animateMotion></circle>
+      <circle r="3.5"><animateMotion dur="3s" begin="0s"    repeatCount="indefinite"><mpath href="#Ostat"/></animateMotion></circle>
+    </g>
+  </svg>
+  </div>
+
+  <div class="legend">
+    <span class="chip"><span class="sw" style="color:var(--violet)"></span><b>desired state</b> — the agent's gitops repo</span>
+    <span class="chip"><span class="sw" style="color:var(--cyan)"></span><b>ArgoCD sync</b> — Git → CR instances (every 60s)</span>
+    <span class="chip"><span class="sw" style="color:var(--blue)"></span><b>CR instances</b> — validated against the CRDs</span>
+    <span class="chip"><span class="sw" style="color:var(--green)"></span><b>operator reconcile</b> — CRs → reality + status</span>
+  </div>
+  <p class="key"><b>Two reconcile loops.</b> An ArgoCD <b>ApplicationSet</b> discovers each <code>…-agent-gitops</code> repo and an <b>Application</b> keeps the cluster's CRs matching Git. The <b>operator</b> watches <code>AgentGateway</code> / <code>AgentWorkstation</code> / <code>KnowledgeBase</code> instances (validated against their CRDs) and keeps reality — the gateway pod, the KB volume, the Mattermost presence — matching the CRs, writing status back. Declarative, self-healing, reversible: delete the repo and it all unwinds, no orphans.</p>
+</div>
+</body>
+</html>
