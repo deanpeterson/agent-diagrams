@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="description" content="How DNS and the load balancer get wired for a Connectivity Link gateway on OpenShift: you write four objects in Git, and OpenShift GitOps, the Ingress Operator's gateway controller, the cloud controller manager or MetalLB, cert-manager and the Connectivity Link DNS Operator write everything else, from load balancer to DNS record to certificate. Then one request travels the chain."/>
+<title>DNS and Load Balancer Wiring</title>
+<style>
+  :root{color-scheme:dark;--bg:#0a0f1e;--ink:#e8eefc;--muted:#9fb0d0;--line:#26344f;--gold:#fbbf24;--cyan:#22d3ee;--green:#34d399;--violet:#a78bfa;--rose:#fb7185;--blue:#60a5fa;--red:#ee0000}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,"Red Hat Text",Inter,Segoe UI,sans-serif}
+  .wrap{max-width:1400px;margin:0 auto;padding:18px 16px 28px}
+  h1{font-size:24px;margin:0 0 4px;letter-spacing:-.01em}h1 span{color:var(--gold)}
+  .lede{color:var(--muted);margin:0 0 12px;font-size:14.5px}
+  .card{background:radial-gradient(1200px 500px at 30% -10%,#15203d 0%,#0a0f1e 60%);border:1px solid var(--line);border-radius:18px;padding:10px 10px 6px;overflow:hidden}
+  svg{width:100%;height:auto;display:block}
+  .nt{font-weight:700;font-size:13.5px;fill:var(--ink)}
+  .ns{font-size:10.5px;fill:var(--muted)}
+  .wl{font-size:10.5px;fill:var(--muted);font-weight:600}
+  .band{font-size:10.5px;font-weight:700;letter-spacing:.8px;fill:var(--muted)}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:10px;fill:#bfeaf5}
+  .node{stroke-width:1.3}
+  .n-std{fill:#121a2e;stroke:#3b4a6b}
+  .n-gold{fill:#161a2c;stroke:rgba(251,191,36,.6)}
+  .n-cyan{fill:#0e1e34;stroke:rgba(34,211,238,.6)}
+  .n-blue{fill:#0f1b34;stroke:rgba(96,165,250,.7)}
+  .n-violet{fill:#151332;stroke:rgba(167,139,250,.6)}
+  .n-green{fill:#0d2321;stroke:rgba(52,211,153,.6)}
+  .n-rose{fill:#2a1220;stroke:rgba(251,113,133,.6)}
+  .chipr{stroke-width:1.2}
+  .c-cyan{fill:#0b2233;stroke:rgba(34,211,238,.55)}.c-std{fill:#141b2f;stroke:#3b4a6b}.c-gold{fill:#2a2410;stroke:rgba(251,191,36,.55)}.c-green{fill:#0d2321;stroke:rgba(52,211,153,.55)}.c-violet{fill:#1c1838;stroke:rgba(167,139,250,.55)}
+  .zone{fill:rgba(96,165,250,.035);stroke:rgba(96,165,250,.34);stroke-dasharray:5 6}
+  .wire{fill:none;stroke-width:1.6}
+  .w-cfg{stroke:rgba(203,213,225,.3);stroke-dasharray:2 6}
+  .w-req{stroke:rgba(251,191,36,.38)}
+  .w-dns{stroke:rgba(34,211,238,.4)}
+  .w-ctl{stroke:rgba(167,139,250,.45)}
+  .w-tls{stroke:rgba(52,211,153,.45)}
+  .L{opacity:.13;transition:opacity .5s}.L.on{opacity:1}
+  .fade{transition:opacity .5s}.fade.off{opacity:0}
+  .hl rect.node{stroke-width:2.2;filter:url(#glow)}
+  .steps{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0 10px}
+  .step{border:1px solid var(--line);background:#0f1730;color:var(--ink);border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer;display:flex;gap:8px;align-items:center}
+  .step .n{width:20px;height:20px;border-radius:50%;background:#1e2a47;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+  .step.active{background:var(--gold);color:#111;border-color:var(--gold)}.step.active .n{background:rgba(0,0,0,.18)}
+  .ctl{margin-left:auto;display:flex;gap:8px}.ctl button{border:1px solid var(--line);background:#0f1730;color:var(--ink);border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer}
+  .cap{font-size:16.5px;line-height:1.5;margin:0 0 10px}.cap b{color:var(--gold)}.cap .k{color:var(--muted);font-size:12px;letter-spacing:.12em;text-transform:uppercase;margin-right:8px}
+  .legend{display:flex;flex-wrap:wrap;gap:14px 22px;font-size:13px;color:var(--muted);margin:2px 0 8px}.legend b{color:var(--ink)}.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:-1px}
+  .key{font-size:14px;color:var(--muted);margin-top:6px}.key b{color:var(--gold)}
+  @media (max-width:700px){h1{font-size:19px}.cap{font-size:14.5px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>How the DNS and the load balancer get wired — <span>you write four objects, controllers write the rest</span></h1>
+  <p class="lede">Nobody edits a load balancer or a DNS zone by hand. A Gateway, an HTTPRoute, a TLSPolicy and a DNSPolicy go into Git; OpenShift GitOps applies them, OpenShift builds the gateway and gets it an address, cert-manager issues the certificate, and the Connectivity Link DNS Operator publishes the name. Then a request walks the chain.</p>
+  <div class="card">
+  <svg viewBox="0 0 1400 820" role="img" aria-label="Animated diagram of how a Connectivity Link gateway on OpenShift gets its load balancer address, certificate and DNS records, and how a request travels from a client to a pod">
+    <defs>
+      <filter id="glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="3.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <marker id="arrC" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0,0 L 10,5 L 0,10 z" fill="rgba(34,211,238,.9)"/></marker>
+      <marker id="arrG" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0,0 L 10,5 L 0,10 z" fill="rgba(251,191,36,.9)"/></marker>
+      <marker id="arrV" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0,0 L 10,5 L 0,10 z" fill="rgba(167,139,250,.9)"/></marker>
+      <marker id="arrT" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0,0 L 10,5 L 0,10 z" fill="rgba(52,211,153,.9)"/></marker>
+    </defs>
+
+    <!-- ===== YOU WRITE (Git) ===== -->
+    <g id="git" class="L">
+      <rect class="zone" x="20" y="14" width="300" height="392" rx="14"/>
+      <text class="band" x="36" y="38" style="fill:#cbd5e1">YOU WRITE · FOUR OBJECTS IN GIT</text>
+      <g filter="url(#soft)"><rect class="node n-blue" x="36" y="52" width="268" height="66" rx="10"/></g>
+      <text class="nt" x="50" y="74">Gateway</text><text class="ns" x="50" y="91">listener https · hostname api.example.com</text><text class="ns" x="50" y="106">gatewayClassName: openshift-default</text>
+      <g filter="url(#soft)"><rect class="node n-blue" x="36" y="128" width="268" height="52" rx="10"/></g>
+      <text class="nt" x="50" y="150">HTTPRoute</text><text class="ns" x="50" y="167">api.example.com /orders → Service orders:8080</text>
+      <g filter="url(#soft)"><rect class="node n-green" x="36" y="190" width="268" height="52" rx="10"/></g>
+      <text class="nt" x="50" y="212">TLSPolicy</text><text class="ns" x="50" y="229">issuerRef: letsencrypt (cert-manager)</text>
+      <g filter="url(#soft)"><rect class="node n-cyan" x="36" y="252" width="268" height="80" rx="10"/></g>
+      <text class="nt" x="50" y="274">DNSPolicy</text><text class="ns" x="50" y="291">providerRefs: route53-credentials (a Secret)</text><text class="ns" x="50" y="306">loadBalancing: geo + weight · healthCheck /health</text><text class="ns" x="50" y="321">the only credential you supply: the DNS provider's</text>
+      <g filter="url(#soft)"><rect class="node n-std" x="36" y="344" width="268" height="50" rx="10"/></g>
+      <text class="nt" x="50" y="366">OpenShift GitOps</text><text class="ns" x="50" y="383">applies the four objects to the cluster</text>
+      <path id="gitbus" class="wire w-cfg" d="M 320,369 L 350,369 L 350,300 L 380,300"/>
+    </g>
+
+    <!-- ===== CLUSTER ===== -->
+    <g id="cluster" class="L">
+      <rect class="zone" x="380" y="14" width="560" height="560" rx="14"/>
+      <text class="band" x="396" y="38" style="fill:#8fb3f6">OPENSHIFT CLUSTER · WHAT THE CONTROLLERS BUILD FROM THOSE OBJECTS</text>
+    </g>
+    <!-- gateway controller -->
+    <g id="gwctl" class="L">
+      <g filter="url(#soft)"><rect class="node n-violet" x="396" y="52" width="250" height="74" rx="10"/></g>
+      <text class="nt" x="410" y="74">Gateway controller</text><text class="ns" x="410" y="91">Ingress Operator · Service Mesh 3 (Istio)</text><text class="ns" x="410" y="106">reads the Gateway → runs the Envoy data plane</text>
+      <path id="c1" class="wire w-ctl" marker-end="url(#arrV)" d="M 521,126 L 521,160"/>
+    </g>
+    <g id="envoy" class="L">
+      <g filter="url(#soft)"><rect class="node n-blue" x="396" y="164" width="250" height="70" rx="10"/></g>
+      <text class="nt" x="410" y="186">Envoy gateway pods</text><text class="ns" x="410" y="203">Deployment api-gateway-openshift-default</text><text class="ns" x="410" y="218">:443 for api.example.com · HTTPRoute rules</text>
+      <g filter="url(#soft)"><rect class="node n-blue" x="396" y="246" width="250" height="66" rx="10"/></g>
+      <text class="nt" x="410" y="268">Service · type LoadBalancer</text><text class="ns" x="410" y="284">status.loadBalancer.ingress:</text><text id="svcaddr" class="mono" x="410" y="300">(waiting for an address)</text>
+      <path id="c2" class="wire w-ctl" d="M 521,234 L 521,246"/>
+    </g>
+    <!-- address writers -->
+    <g id="addr" class="L">
+      <g filter="url(#soft)"><rect class="node n-violet" x="672" y="52" width="252" height="108" rx="10"/></g>
+      <text class="band" x="686" y="72" style="fill:#c4b5fd">WHO GIVES THE SERVICE AN ADDRESS</text>
+      <text class="wl" x="686" y="90" style="fill:var(--ink)">Cloud: the cloud controller manager</text><text class="ns" x="686" y="105">ROSA → AWS NLB · ARO → Azure LB · GCP LB</text>
+      <text class="wl" x="686" y="124" style="fill:var(--ink)">On premises: MetalLB Operator</text><text class="ns" x="686" y="139">an IP from your pool, announced by L2 or BGP</text>
+      <text class="ns" x="686" y="153" style="fill:#fecdd3">no pool → ClusterIP + an OpenShift Route</text>
+      <path id="a1" class="wire w-ctl" marker-end="url(#arrV)" d="M 672,130 L 659,130 L 659,282 L 646,282"/>
+    </g>
+    <!-- the LB itself -->
+    <g id="lb" class="L">
+      <g filter="url(#soft)"><rect class="node n-violet" x="672" y="170" width="252" height="64" rx="10"/></g>
+      <text class="nt" x="686" y="192">The load balancer</text><text id="lbaddr" class="mono" x="686" y="209">a1b2.elb.ca-central-1.amazonaws.com</text><text class="ns" x="686" y="225">→ the nodes’ port 31443, health-checked</text>
+      <path id="l1" class="wire w-req" marker-end="url(#arrG)" d="M 672,202 L 653,202 L 653,190 L 646,190"/>
+    </g>
+    <!-- certificate -->
+    <g id="cert" class="L">
+      <g filter="url(#soft)"><rect class="node n-green" x="672" y="246" width="252" height="86" rx="10"/></g>
+      <text class="nt" x="686" y="268">cert-manager</text><text class="ns" x="686" y="285">TLSPolicy → Certificate → ACME → Secret</text><text class="ns" x="686" y="300">api-example-com-tls, mounted by Envoy</text><text class="ns" x="686" y="315">renewed before expiry, no hands</text>
+      <path id="t1" class="wire w-tls" marker-end="url(#arrT)" d="M 672,289 L 665,289 L 665,212 L 646,212"/>
+    </g>
+    <!-- DNS operator -->
+    <g id="dnsop" class="L">
+      <g filter="url(#soft)"><rect class="node n-cyan" x="396" y="344" width="528" height="94" rx="10"/></g>
+      <text class="nt" x="410" y="366">Connectivity Link · DNS Operator</text>
+      <text class="ns" x="410" y="383">reads the listener hostname and the Gateway’s address (status.addresses) → one DNSRecord per listener</text>
+      <text class="ns" x="410" y="398">writes it at the provider with the credential from your Secret · re-checks every 5 s → 15 min</text>
+      <text class="ns" x="410" y="413">probes /health every minute · an unhealthy address leaves a multi-value record, never the last one</text>
+      <text class="ns" x="410" y="428" style="fill:#8fe6f5">a dead cluster cannot clean up after itself: its records are removed from a surviving cluster</text>
+      <path id="d0" class="wire w-cfg" d="M 521,312 L 521,344"/>
+    </g>
+    <!-- app pods -->
+    <g id="app" class="L">
+      <g filter="url(#soft)"><rect class="node n-gold" x="396" y="452" width="250" height="60" rx="10"/></g>
+      <text class="nt" x="410" y="474">Service orders → pods</text><text class="ns" x="410" y="491">your application, unchanged</text>
+      <g filter="url(#soft)"><rect class="node n-std" x="672" y="452" width="252" height="60" rx="10"/></g>
+      <text class="nt" x="686" y="474">Authorino · Limitador</text><text class="ns" x="686" y="491">policies run inside Envoy’s request path</text>
+      <path id="p2" class="wire w-req" marker-end="url(#arrG)" d="M 396,226 L 388,226 L 388,482 L 396,482"/>
+    </g>
+
+    <!-- ===== DNS ZONE ===== -->
+    <g id="zone" class="L">
+      <rect class="zone" x="960" y="14" width="420" height="300" rx="14"/>
+      <text class="band" x="976" y="38" style="fill:#8fe6f5">DNS ZONE · example.com</text><text class="ns" x="1364" y="38" text-anchor="end">Route 53 · Azure DNS · Cloud DNS · CoreDNS</text>
+      <g id="recSimple" class="fade">
+        <rect class="chipr c-cyan" x="976" y="52" width="388" height="26" rx="6"/>
+        <text class="mono" x="988" y="69">api.example.com   CNAME   a1b2.elb.ca-central-1.amazonaws.com   TTL 60</text>
+      </g>
+      <g id="recTree" class="fade off">
+        <rect class="chipr c-cyan" x="976" y="52" width="388" height="26" rx="6"/><text class="mono" x="988" y="69">api.example.com          CNAME  klb.api.example.com</text>
+        <rect class="chipr c-cyan" x="976" y="84" width="388" height="26" rx="6"/><text class="mono" x="988" y="101">klb.api.example.com      CNAME  na.klb.api.…  (geo NA · default *)</text>
+        <rect class="chipr c-cyan" x="976" y="116" width="388" height="26" rx="6"/><text class="mono" x="988" y="133">na.klb.api.example.com   CNAME  rosa-1.klb.api.…  weight 120</text>
+        <rect class="chipr c-cyan" x="976" y="148" width="388" height="26" rx="6"/><text class="mono" x="988" y="165">na.klb.api.example.com   CNAME  aro-1.klb.api.…   weight 120</text>
+        <rect class="chipr c-cyan" x="976" y="180" width="388" height="26" rx="6"/><text class="mono" x="988" y="197">rosa-1.klb.api.…         CNAME  a1b2.elb.ca-central-1.amazonaws.com</text>
+        <rect class="chipr c-cyan" x="976" y="212" width="388" height="26" rx="6"/><text class="mono" x="988" y="229">aro-1.klb.api.…          A      20.48.113.9   TTL 60</text>
+        <rect class="chipr c-std" x="976" y="244" width="388" height="26" rx="6"/><text class="mono" x="988" y="261" style="fill:#cbd5e1">kuadrant-…  TXT  owner=rosa-1 / owner=aro-1  (who wrote what)</text>
+      </g>
+      <text id="zoneNote1" class="ns" x="976" y="288" style="fill:#8fe6f5">one record, written by the DNS Operator, not by you:</text>
+      <text id="zoneNote2" class="ns" x="976" y="303" style="fill:#8fe6f5">your old wildcard record, now one per gateway hostname</text>
+      <path id="w1" class="wire w-dns" marker-end="url(#arrC)" d="M 924,391 L 942,391 L 942,290 L 960,290"/>
+    </g>
+
+    <!-- ===== CLIENT ===== -->
+    <g id="client" class="L">
+      <g filter="url(#soft)"><rect class="node n-gold" x="976" y="340" width="404" height="60" rx="10"/></g>
+      <text class="nt" x="990" y="362">Client · store app, partner, browser</text><text class="ns" x="990" y="379">1 asks its resolver for api.example.com · 2 connects to the address it gets back</text>
+      <path id="q1" class="wire w-dns" d="M 1178,340 L 1178,314"/>
+      <path id="q2" class="wire w-req" marker-end="url(#arrG)" d="M 976,385 L 950,385 L 950,202 L 924,202"/>
+    </g>
+
+    <!-- ===== THEN vs NOW strip ===== -->
+    <g id="strip" class="L">
+      <rect class="zone" x="20" y="420" width="300" height="154" rx="14"/>
+      <text class="band" x="36" y="444" style="fill:#fecdd3">THEN · THE ROUTER MODEL</text>
+      <text class="ns" x="36" y="464">*.apps.example.com  A  → router load balancer IP</text>
+      <text class="ns" x="36" y="480">one record, one entry, written once by hand;</text>
+      <text class="ns" x="36" y="495">HAProxy picks the service by Host header.</text>
+      <text class="band" x="36" y="522" style="fill:#9ff0d0">NOW · PER GATEWAY, PER CLUSTER</text>
+      <text class="ns" x="36" y="542">the same last hop, Envoy instead of HAProxy,</text>
+      <text class="ns" x="36" y="557">but the address, the certificate and the DNS</text>
+      <text class="ns" x="36" y="572">records are written by controllers, from Git.</text>
+    </g>
+
+    <!-- ===== WHO WRITES WHAT table ===== -->
+    <g id="table" class="L">
+      <rect class="zone" x="20" y="590" width="1360" height="214" rx="14"/>
+      <text class="band" x="36" y="614" style="fill:#cbd5e1">WHO WRITES WHAT</text>
+      <rect class="chipr c-std" x="36" y="626" width="430" height="164" rx="8"/>
+      <text class="wl" x="50" y="648" style="fill:var(--ink)">You, in Git</text>
+      <text class="ns" x="50" y="668">Gateway (listener, hostname, class)</text><text class="ns" x="50" y="684">HTTPRoute (host, path, backend Service)</text><text class="ns" x="50" y="700">TLSPolicy (which issuer)</text><text class="ns" x="50" y="716">DNSPolicy (provider Secret, geo, weight, health check)</text><text class="ns" x="50" y="732">One Secret with the DNS provider's credential</text><text class="ns" x="50" y="748" style="fill:#f6d488">Nothing else. No load-balancer config, no zone file.</text>
+      <rect class="chipr c-violet" x="486" y="626" width="430" height="164" rx="8"/>
+      <text class="wl" x="500" y="648" style="fill:var(--ink)">OpenShift</text>
+      <text class="ns" x="500" y="668">Ingress Operator + Service Mesh 3: the Envoy pods and Service</text><text class="ns" x="500" y="684">Cloud controller manager: the cloud load balancer and its targets</text><text class="ns" x="500" y="700">MetalLB Operator on premises: the IP and its announcement</text><text class="ns" x="500" y="716">cert-manager: the certificate, the Secret, the renewals</text><text class="ns" x="500" y="732">OpenShift GitOps: applying every object above from Git</text><text class="ns" x="500" y="748" style="fill:#c4b5fd">All Red Hat operators, all declarative, all on the cluster.</text>
+      <rect class="chipr c-cyan" x="936" y="626" width="430" height="164" rx="8"/>
+      <text class="wl" x="950" y="648" style="fill:var(--ink)">Connectivity Link</text>
+      <text class="ns" x="950" y="668">DNS Operator: the records at the provider, per cluster</text><text class="ns" x="950" y="684">Health probes and the withdraw rule (never the last address)</text><text class="ns" x="950" y="700">Geo and weighted record tree when several clusters share a name</text><text class="ns" x="950" y="716">AuthPolicy, RateLimitPolicy inside Envoy's request path</text><text class="ns" x="950" y="732">CoreDNS on premises when there is no cloud zone</text><text class="ns" x="950" y="748" style="fill:#8fe6f5">One subscription, four operators, no management server.</text>
+    </g>
+
+    <!-- ===== dots ===== -->
+    <g id="dotsGit" class="fade" fill="#cbd5e1" filter="url(#glow)">
+      <circle r="3.5"><animateMotion dur="2.2s" begin="0s" repeatCount="indefinite"><mpath href="#gitbus"/></animateMotion></circle>
+    </g>
+    <g id="dotsCtl" class="fade off" fill="var(--violet)" filter="url(#glow)">
+      <circle r="3.5"><animateMotion dur="1.4s" begin="0s" repeatCount="indefinite"><mpath href="#c1"/></animateMotion></circle>
+    </g>
+    <g id="dotsAddr" class="fade off" fill="var(--violet)" filter="url(#glow)">
+      <circle r="3.5"><animateMotion dur="2s" begin="0s" repeatCount="indefinite"><mpath href="#a1"/></animateMotion></circle>
+      <circle r="3.5"><animateMotion dur="1.6s" begin="0.4s" repeatCount="indefinite"><mpath href="#l1"/></animateMotion></circle>
+    </g>
+    <g id="dotsTls" class="fade off" fill="var(--green)" filter="url(#glow)">
+      <circle r="3.5"><animateMotion dur="1.8s" begin="0s" repeatCount="indefinite"><mpath href="#t1"/></animateMotion></circle>
+    </g>
+    <g id="dotsDns" class="fade off" fill="var(--cyan)" filter="url(#glow)">
+      <circle r="3.5"><animateMotion dur="2s" begin="0s" repeatCount="indefinite"><mpath href="#w1"/></animateMotion></circle>
+    </g>
+    <g id="dotsReq" class="fade off" filter="url(#glow)">
+      <circle r="3.5" fill="var(--cyan)"><animateMotion dur="1.4s" begin="0s" repeatCount="indefinite" keyPoints="0;1;0" keyTimes="0;.5;1" calcMode="linear"><mpath href="#q1"/></animateMotion></circle>
+      <circle r="4.5" fill="var(--gold)"><animateMotion dur="2.4s" begin="0.7s" repeatCount="indefinite"><mpath href="#q2"/></animateMotion></circle>
+      <circle r="4.5" fill="var(--gold)"><animateMotion dur="1.6s" begin="1.9s" repeatCount="indefinite"><mpath href="#l1"/></animateMotion></circle>
+      <circle r="4.5" fill="var(--gold)"><animateMotion dur="1.8s" begin="2.6s" repeatCount="indefinite"><mpath href="#p2"/></animateMotion></circle>
+    </g>
+  </svg>
+  </div>
+
+  <div class="steps" id="steps"></div>
+  <p class="cap" id="cap"></p>
+  <div class="legend">
+    <span><span class="dot" style="background:#cbd5e1"></span><b>configuration</b> — Git, applied by OpenShift GitOps</span>
+    <span><span class="dot" style="background:var(--violet)"></span><b>controllers building things</b> — gateway, load balancer, address</span>
+    <span><span class="dot" style="background:var(--green)"></span><b>certificate</b> — cert-manager</span>
+    <span><span class="dot" style="background:var(--cyan)"></span><b>DNS</b> — records written and looked up</span>
+    <span><span class="dot" style="background:var(--gold)"></span><b>a request</b> — client to pod</span>
+  </div>
+  <p class="key" id="key"><b>The only thing you configure by hand is the DNS provider credential.</b> Every hop after that, from load balancer to certificate to record, is written by a controller that watches the objects in Git, and rewritten when they change.</p>
+</div>
+<script>
+const steps = [
+  { t:"You write four objects", cap:"<b>You write four objects, in Git.</b> A Gateway with an HTTPS listener for api.example.com, an HTTPRoute that sends /orders to your Service, a TLSPolicy naming an issuer, and a DNSPolicy naming the DNS provider's credential Secret, with geo, weight and a health check if you want them. OpenShift GitOps applies them. Compare the left panel with the router days: one wildcard record and a load-balancer config somebody typed.", layers:["git","strip"], dots:["dotsGit"], hl:[] },
+  { t:"OpenShift builds the gateway", cap:"<b>OpenShift builds the gateway.</b> The Ingress Operator's gateway controller, which is OpenShift Service Mesh 3 running in openshift-ingress, sees the Gateway and creates the data plane: Envoy pods with a listener on 443 for that hostname, programmed with the HTTPRoute rules, and a Service of type LoadBalancer in front of them. You did not deploy Envoy; the class did.", layers:["git","cluster","gwctl","envoy"], dots:["dotsCtl"], hl:["gwctl"] },
+  { t:"Something gives it an address", cap:"<b>Something gives the Service an address, and that is the part you used to do by hand.</b> In the cloud the cloud controller manager that OpenShift already runs calls the provider's API and builds the load balancer, targets and health checks included, then writes its hostname or IP into the Service; the Gateway copies it into its status. On premises the MetalLB Operator hands out an IP from a pool you defined once and announces it over L2 or BGP. On a cluster with neither configured, the Service stays ClusterIP and an OpenShift Route puts the router in front, which is how this demo cluster runs.", layers:["git","cluster","gwctl","envoy","addr","lb"], dots:["dotsAddr"], hl:["addr"], svc:"a1b2.elb.ca-central-1.amazonaws.com" },
+  { t:"cert-manager issues the certificate", cap:"<b>The certificate arrives on its own.</b> Connectivity Link turns the TLSPolicy into a cert-manager Certificate; cert-manager runs the ACME challenge with the issuer you named, stores the certificate in a Secret, and Envoy serves it on the listener. Renewal happens before expiry with nobody watching.", layers:["git","cluster","gwctl","envoy","addr","lb","cert"], dots:["dotsTls"], hl:["cert"], svc:"a1b2.elb.ca-central-1.amazonaws.com" },
+  { t:"The DNS Operator publishes the name", cap:"<b>The DNS Operator publishes the name.</b> It reads the listener hostname and the address from the Gateway's status, builds one DNSRecord per listener and writes it into the zone through the provider's API with the credential from your Secret. A single gateway gets one record, exactly your old record but per gateway. Several clusters sharing the hostname get the tree: geo records per region, weighted records per cluster, one leaf per cluster pointing at its own load balancer, and TXT markers saying who owns what. Health probes run every minute; an unhealthy address is withdrawn from a multi-value record, never the last one.", layers:["git","cluster","gwctl","envoy","addr","lb","cert","dnsop","zone"], dots:["dotsDns"], hl:["dnsop","zone"], svc:"a1b2.elb.ca-central-1.amazonaws.com", tree:true },
+  { t:"One request", cap:"<b>Now one request.</b> The client asks its resolver for api.example.com and gets an address back: the geo record picked its region, the weighted record picked a cluster, and the leaf gave that cluster's load balancer. The client connects to that address. The load balancer forwards to an Envoy pod, Envoy matches the host and the /orders path, Authorino and Limitador run inside that request path, and the Service delivers it to a pod. DNS chose the cluster; Envoy chose the pod; nothing forwards between clusters.", layers:["git","cluster","gwctl","envoy","addr","lb","cert","dnsop","zone","client","app"], dots:["dotsReq"], hl:["client"], svc:"a1b2.elb.ca-central-1.amazonaws.com", tree:true },
+  { t:"Who writes what", cap:"<b>Who writes what.</b> You: four objects and one provider credential. OpenShift: the gateway pods and Service, the load balancer or the MetalLB address, the certificate, and the act of applying all of it from Git. Connectivity Link: the DNS records, the health probes, the geo and weighted tree, and the policies inside the request path. The improvement over the router model is not the last hop, which is the same idea with Envoy instead of HAProxy. It is that every link before it is now written by a controller from a resource you can review in a pull request.", layers:["git","cluster","gwctl","envoy","addr","lb","cert","dnsop","zone","client","app","strip","table"], dots:[], hl:["table"], svc:"a1b2.elb.ca-central-1.amazonaws.com", tree:true },
+];
+const $ = id => document.getElementById(id);
+const ALL_L = ["git","cluster","gwctl","envoy","addr","lb","cert","dnsop","zone","client","app","strip","table"];
+const ALL_D = ["dotsGit","dotsCtl","dotsAddr","dotsTls","dotsDns","dotsReq"];
+let cur = 0, auto = true, timer = null;
+function render(i){
+  cur = i; const s = steps[i];
+  ALL_L.forEach(id => $(id).classList.toggle('on', s.layers.includes(id)));
+  ALL_D.forEach(id => $(id).classList.toggle('off', !s.dots.includes(id)));
+  ALL_L.forEach(id => $(id).classList.toggle('hl', (s.hl||[]).includes(id)));
+  $('svcaddr').textContent = s.svc || '(waiting for an address)';
+  $('recSimple').classList.toggle('off', !!s.tree); $('recTree').classList.toggle('off', !s.tree);
+  $('zoneNote1').textContent = s.tree ? 'many clusters, one name: geo picks the region, weight picks the cluster,' : 'one record, written by the DNS Operator, not by you:';
+  $('zoneNote2').textContent = s.tree ? 'and the leaf is that cluster’s own load balancer address' : 'your old wildcard record, now one per gateway hostname';
+  $('cap').innerHTML = `<span class="k">Step ${i+1} of ${steps.length}</span>` + s.cap;
+  document.querySelectorAll('.step').forEach((b,k)=>b.classList.toggle('active', k===i));
+}
+function build(){
+  const box = $('steps');
+  steps.forEach((s,i)=>{ const b=document.createElement('button'); b.className='step'; b.innerHTML=`<span class="n">${i+1}</span>${s.t}`; b.onclick=()=>{stop(); render(i);}; box.appendChild(b); });
+  const ctl=document.createElement('div'); ctl.className='ctl';
+  ctl.innerHTML='<button id="prev">‹ Prev</button><button id="next">Next ›</button><button id="play">Auto-play</button>'; box.appendChild(ctl);
+  $('prev').onclick=()=>{stop(); render((cur+steps.length-1)%steps.length);};
+  $('next').onclick=()=>{stop(); render((cur+1)%steps.length);};
+  $('play').onclick=()=>{ auto ? stop() : start(); };
+}
+function start(){ auto=true; $('play').textContent='Pause'; timer=setInterval(()=>render((cur+1)%steps.length), 9000); }
+function stop(){ auto=false; $('play').textContent='Auto-play'; if(timer){clearInterval(timer); timer=null;} }
+document.addEventListener('keydown', e=>{ if(e.key==='ArrowRight'){stop(); render((cur+1)%steps.length);} if(e.key==='ArrowLeft'){stop(); render((cur+steps.length-1)%steps.length);} if(e.key===' '){e.preventDefault(); auto?stop():start();} });
+build();
+const h = new URLSearchParams(location.hash.slice(1)); const st = parseInt(h.get('step')||'1',10)-1; render(isNaN(st)?0:Math.max(0,Math.min(steps.length-1,st)));
+if (h.get('auto')==='0') { auto=false; $('play').textContent='Auto-play'; } else start();
+</script>
+</body>
+</html>
