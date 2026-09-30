@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="description" content="One API from template to audited traffic on OpenShift: a developer runs a Developer Hub template, OpenShift GitOps builds the namespace, the Connectivity Link gateway enforces keys, plans and limits, and every call leaves a metric, a log line and a trace. Three ledgers answer who did what."/>
+<title>API Demo Flow</title>
+<style>
+  :root{color-scheme:dark;--bg:#0a0f1e;--ink:#e8eefc;--muted:#9fb0d0;--line:#26344f;--gold:#fbbf24;--cyan:#22d3ee;--green:#34d399;--violet:#a78bfa;--rose:#fb7185;--blue:#60a5fa;--red:#ee0000}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,"Red Hat Text",Inter,Segoe UI,sans-serif}
+  .wrap{max-width:1400px;margin:0 auto;padding:18px 16px 28px}
+  h1{font-size:24px;margin:0 0 4px;letter-spacing:-.01em}h1 span{color:var(--gold)}
+  .lede{color:var(--muted);margin:0 0 12px;font-size:14.5px}
+  .card{background:radial-gradient(1200px 500px at 30% -10%,#15203d 0%,#0a0f1e 60%);border:1px solid var(--line);border-radius:18px;padding:10px 10px 6px;overflow:hidden}
+  svg{width:100%;height:auto;display:block}
+  .nt{font-weight:700;font-size:13.5px;fill:var(--ink)}
+  .ns{font-size:10.5px;fill:var(--muted)}
+  .wl{font-size:10.5px;fill:var(--muted);font-weight:600}
+  .band{font-size:10.5px;font-weight:700;letter-spacing:.8px;fill:var(--muted)}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:10px;fill:#bfeaf5}
+  .st{font-size:9px;font-weight:700;letter-spacing:.6px}
+  .node{stroke-width:1.3}
+  .n-std{fill:#121a2e;stroke:#3b4a6b}
+  .n-gold{fill:#161a2c;stroke:rgba(251,191,36,.6)}
+  .n-cyan{fill:#0e1e34;stroke:rgba(34,211,238,.6)}
+  .n-blue{fill:#0f1b34;stroke:rgba(96,165,250,.7)}
+  .n-violet{fill:#151332;stroke:rgba(167,139,250,.6)}
+  .n-green{fill:#0d2321;stroke:rgba(52,211,153,.6)}
+  .n-rose{fill:#2a1220;stroke:rgba(251,113,133,.6)}
+  .chipr{stroke-width:1.2}
+  .c-cyan{fill:#0b2233;stroke:rgba(34,211,238,.55)}.c-std{fill:#141b2f;stroke:#3b4a6b}.c-gold{fill:#2a2410;stroke:rgba(251,191,36,.55)}.c-green{fill:#0d2321;stroke:rgba(52,211,153,.55)}.c-violet{fill:#1c1838;stroke:rgba(167,139,250,.55)}
+  .zone{fill:rgba(96,165,250,.035);stroke:rgba(96,165,250,.34);stroke-dasharray:5 6}
+  .wire{fill:none;stroke-width:1.6}
+  .w-cfg{stroke:rgba(203,213,225,.3);stroke-dasharray:2 6}
+  .w-req{stroke:rgba(251,191,36,.38)}
+  .w-key{stroke:rgba(167,139,250,.45)}
+  .w-sig{stroke:rgba(34,211,238,.4)}
+  .L{opacity:.13;transition:opacity .5s}.L.on{opacity:1}
+  .fade{transition:opacity .5s}.fade.off{opacity:0}
+  .hl rect.node{stroke-width:2.2;filter:url(#glow)}
+  .steps{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0 10px}
+  .step{border:1px solid var(--line);background:#0f1730;color:var(--ink);border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer;display:flex;gap:8px;align-items:center}
+  .step .n{width:20px;height:20px;border-radius:50%;background:#1e2a47;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+  .step.active{background:var(--gold);color:#111;border-color:var(--gold)}.step.active .n{background:rgba(0,0,0,.18)}
+  .ctl{margin-left:auto;display:flex;gap:8px}.ctl button{border:1px solid var(--line);background:#0f1730;color:var(--ink);border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer}
+  .cap{font-size:16.5px;line-height:1.5;margin:0 0 10px}.cap b{color:var(--gold)}.cap .k{color:var(--muted);font-size:12px;letter-spacing:.12em;text-transform:uppercase;margin-right:8px}
+  .legend{display:flex;flex-wrap:wrap;gap:14px 22px;font-size:13px;color:var(--muted);margin:2px 0 8px}.legend b{color:var(--ink)}.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:-1px}
+  .key{font-size:14px;color:var(--muted);margin-top:6px}.key b{color:var(--gold)}
+  @media (max-width:700px){h1{font-size:19px}.cap{font-size:14.5px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>One API, from template to audited traffic — <span>what happens on OpenShift when a developer clicks Create</span></h1>
+  <p class="lede">A developer fills in a Developer Hub template with an OpenAPI file. OpenShift GitOps builds the namespace, the Connectivity Link gateway takes the route and its policies, a consumer asks for a key and an owner approves it, and every call leaves a metric, a log line and a trace behind. Three ledgers answer "who did what".</p>
+  <div class="card">
+  <svg viewBox="0 0 1400 840" role="img" aria-label="Animated diagram of a governed API on OpenShift: Developer Hub template, GitOps, the Connectivity Link gateway, key approval, traffic, signals and audit ledgers">
+    <defs>
+      <filter id="glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="3.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <marker id="arrC" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0,0 L 10,5 L 0,10 z" fill="rgba(34,211,238,.9)"/></marker>
+      <marker id="arrG" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0,0 L 10,5 L 0,10 z" fill="rgba(251,191,36,.9)"/></marker>
+      <marker id="arrV" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0,0 L 10,5 L 0,10 z" fill="rgba(167,139,250,.9)"/></marker>
+      <marker id="arrW" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0,0 L 10,5 L 0,10 z" fill="rgba(203,213,225,.7)"/></marker>
+    </defs>
+
+    <!-- ===== DEVELOPER HUB ===== -->
+    <g id="hub" class="L">
+      <rect class="zone" x="20" y="14" width="300" height="386" rx="14"/>
+      <text class="band" x="36" y="38" style="fill:#cbd5e1">RED HAT DEVELOPER HUB</text>
+      <g filter="url(#soft)"><rect class="node n-blue" x="36" y="52" width="268" height="84" rx="10"/></g>
+      <text class="nt" x="50" y="74">Template: Governed REST API</text><text class="ns" x="50" y="91">inputs: name, OpenAPI file, owner, plans,</text><text class="ns" x="50" y="106">lifecycle (test or prod), backend (image or mock)</text><text class="ns" x="50" y="121" style="fill:#8fb3f6">writes a Git repository and the catalog entry</text>
+      <g filter="url(#soft)"><rect class="node n-std" x="36" y="148" width="268" height="52" rx="10"/></g>
+      <text class="nt" x="50" y="170">API catalog page</text><text class="ns" x="50" y="187">the spec rendered · owner · "Request access"</text>
+      <g filter="url(#soft)"><rect class="node n-violet" x="36" y="212" width="268" height="66" rx="10"/></g>
+      <text class="nt" x="50" y="234">Consumer asks for a key</text><text class="ns" x="50" y="251">plan bronze · use case · Developer Hub writes an</text><text class="ns" x="50" y="266">APIKey in the consumer's namespace</text>
+      <g filter="url(#soft)"><rect class="node n-green" x="36" y="290" width="268" height="96" rx="10"/></g>
+      <text class="band" x="50" y="310" style="fill:#9ff0d0">LEDGER 1 · DEVELOPER HUB AUDIT LOG</text>
+      <text class="ns" x="50" y="328">who ran which template, when, with what result</text><text class="ns" x="50" y="343">catalog changes · RBAC changes · actor and time</text><text class="ns" x="50" y="358">forwarded to OpenShift Logging</text>
+      <text class="st" x="50" y="376" style="fill:#34d399">DOCUMENTED FEATURE · DEVELOPER HUB 1.7</text>
+    </g>
+
+    <!-- ===== GIT + GITOPS ===== -->
+    <g id="git" class="L">
+      <g filter="url(#soft)"><rect class="node n-std" x="350" y="52" width="200" height="84" rx="10"/></g>
+      <text class="nt" x="364" y="74">Git repository api-orders</text><text class="ns" x="364" y="91">openapi.yaml · Deployment · Service</text><text class="ns" x="364" y="106">HTTPRoute · AuthPolicy · PlanPolicy</text><text class="ns" x="364" y="121">RateLimitPolicy · APIProduct · catalog-info</text>
+      <g filter="url(#soft)"><rect class="node n-std" x="350" y="148" width="200" height="52" rx="10"/></g>
+      <text class="nt" x="364" y="170">OpenShift GitOps</text><text class="ns" x="364" y="187">ApplicationSet picks up api-* repos</text>
+      <path id="c1" class="wire w-cfg" marker-end="url(#arrW)" d="M 304,94 L 350,94"/>
+      <path id="c2" class="wire w-cfg" d="M 450,136 L 450,148"/>
+      <path id="c3" class="wire w-cfg" marker-end="url(#arrW)" d="M 550,174 L 580,174"/>
+    </g>
+
+    <!-- ===== NAMESPACE ===== -->
+    <g id="ns" class="L">
+      <rect class="zone" x="580" y="14" width="380" height="386" rx="14"/>
+      <text class="band" x="596" y="38" style="fill:#8fb3f6">NAMESPACE api-orders-test · BUILT FROM GIT</text>
+      <g filter="url(#soft)"><rect class="node n-gold" x="596" y="52" width="160" height="60" rx="10"/></g>
+      <text class="nt" x="610" y="74">Service orders</text><text class="ns" x="610" y="91">your image, or a mock</text><text class="ns" x="610" y="104">generated from the spec</text>
+      <g filter="url(#soft)"><rect class="node n-blue" x="770" y="52" width="174" height="60" rx="10"/></g>
+      <text class="nt" x="784" y="74">HTTPRoute</text><text class="ns" x="784" y="91">/orders → orders:8080</text><text class="ns" x="784" y="104">labels service, deployment</text>
+      <g filter="url(#soft)"><rect class="node n-cyan" x="596" y="124" width="348" height="98" rx="10"/></g>
+      <text class="nt" x="610" y="146">Policies attached to the route</text>
+      <text class="ns" x="610" y="163">AuthPolicy: API keys (and OIDC for production)</text>
+      <text class="ns" x="610" y="178">PlanPolicy: gold 1000 · silver 200 · bronze 20 a day</text>
+      <text class="ns" x="610" y="193">RateLimitPolicy: 50 a minute per source address</text>
+      <text class="ns" x="610" y="208" style="fill:#8fe6f5">APIProduct: "Orders API", published, approval manual</text>
+      <g filter="url(#soft)"><rect class="node n-violet" x="596" y="234" width="348" height="70" rx="10"/></g>
+      <text class="nt" x="610" y="256">Owner approves the key request</text><text class="ns" x="610" y="273">APIKeyRequest → APIKeyApproval (reviewedBy, reviewedAt)</text><text class="ns" x="610" y="288">→ enforcement Secret that Authorino reads</text>
+      <g filter="url(#soft)"><rect class="node n-green" x="596" y="316" width="348" height="70" rx="10"/></g>
+      <text class="band" x="610" y="336" style="fill:#9ff0d0">LEDGER 2 · GIT AND THE KUBERNETES AUDIT LOG</text>
+      <text class="ns" x="610" y="354">every policy, plan and product is a resource with a history:</text><text class="ns" x="610" y="369">who changed it, when, in which pull request; every approval, by whom</text>
+      <text class="st" x="610" y="383" style="fill:#34d399">GITOPS, OPENSHIFT: GA · KEY APPROVALS: TECH PREVIEW</text>
+      <path id="k1" class="wire w-key" marker-end="url(#arrV)" d="M 304,245 L 330,245 L 330,269 L 596,269"/>
+    </g>
+
+    <!-- ===== GATEWAY ===== -->
+    <g id="gw" class="L">
+      <rect class="zone" x="980" y="14" width="400" height="386" rx="14"/>
+      <text class="band" x="996" y="38" style="fill:#f6d488">CONNECTIVITY LINK GATEWAY · ONE PER CLUSTER</text>
+      <g filter="url(#soft)"><rect class="node n-gold" x="996" y="52" width="368" height="60" rx="10"/></g>
+      <text class="nt" x="1010" y="74">Client · a store app, a partner, a test script</text><text class="ns" x="1010" y="91">GET /orders/123 · Authorization: Bearer &lt;key&gt;</text><text class="ns" x="1010" y="104">TLS and DNS already answered by TLSPolicy and DNSPolicy</text>
+      <g filter="url(#soft)"><rect class="node n-blue" x="996" y="126" width="368" height="56" rx="10"/></g>
+      <text class="nt" x="1010" y="148">Envoy · built by the Ingress Operator</text><text class="ns" x="1010" y="165">matches host and path → runs the policies before forwarding</text>
+      <g filter="url(#soft)"><rect class="node n-cyan" x="996" y="194" width="176" height="76" rx="10"/></g>
+      <text class="nt" x="1010" y="216">Authorino</text><text class="ns" x="1010" y="233">key valid? → identity, plan</text><text class="ns" x="1010" y="248">no key → 401</text><text class="ns" x="1010" y="263">wrong caller → 403</text>
+      <g filter="url(#soft)"><rect class="node n-cyan" x="1188" y="194" width="176" height="76" rx="10"/></g>
+      <text class="nt" x="1202" y="216">Limitador</text><text class="ns" x="1202" y="233">counts per identity and plan,</text><text class="ns" x="1202" y="248">per source address</text><text class="ns" x="1202" y="263">over the limit → 429</text>
+      <g filter="url(#soft)"><rect class="node n-std" x="996" y="282" width="368" height="46" rx="10"/></g>
+      <text class="nt" x="1010" y="304">Backend answers → 200</text><text class="ns" x="1010" y="320">x-request-id travels with the call, into every signal below</text>
+      <text class="ns" x="996" y="356" style="fill:#f6d488">On the screen: 200, then 429 on the 21st bronze call, 401 with no key.</text>
+      <text class="ns" x="996" y="372" style="fill:#f6d488">One pull request on the AuthPolicy changes the next answer.</text>
+      <path id="r1" class="wire w-req" marker-end="url(#arrG)" d="M 1180,112 L 1180,126"/>
+      <path id="r2" class="wire w-req" d="M 1084,182 L 1084,194"/>
+      <path id="r3" class="wire w-req" d="M 1276,182 L 1276,194"/>
+      <path id="r4" class="wire w-req" marker-end="url(#arrG)" d="M 1180,270 L 1180,282"/>
+      <path id="r5" class="wire w-req" marker-end="url(#arrG)" d="M 944,82 L 996,82"/>
+    </g>
+
+    <!-- ===== SIGNALS ===== -->
+    <g id="sig" class="L">
+      <rect class="zone" x="20" y="420" width="1360" height="200" rx="14"/>
+      <text class="band" x="36" y="444" style="fill:#8fe6f5">EVERY CALL LEAVES THREE SIGNALS · LEDGER 3 · WHO CALLED WHAT, WHEN, ALLOWED OR DENIED, HOW MUCH</text>
+      <g filter="url(#soft)"><rect class="node n-cyan" x="36" y="456" width="430" height="150" rx="10"/></g>
+      <text class="nt" x="50" y="478">Metrics</text><text class="st" x="380" y="478" style="fill:#34d399">BUILT · GA</text>
+      <text class="ns" x="50" y="496">Envoy, Authorino and Limitador expose counters and histograms</text>
+      <text class="ns" x="50" y="511">→ user workload monitoring (Prometheus) → Thanos → Grafana</text>
+      <text class="ns" x="50" y="526">Kuadrant dashboards: platform engineer, app developer, business</text>
+      <text class="ns" x="50" y="541">requests per route by response code · p95 latency · by path</text>
+      <text class="mono" x="50" y="562">istio_requests_total{destination_service_name="orders"}</text>
+      <text class="ns" x="50" y="582" style="fill:#8fe6f5">answers: how much, how fast, how many denied, growth over time</text>
+      <g filter="url(#soft)"><rect class="node n-cyan" x="486" y="456" width="430" height="150" rx="10"/></g>
+      <text class="nt" x="500" y="478">Access log</text><text class="st" x="790" y="478" style="fill:#fbbf24">PLANNED FOR THURSDAY</text>
+      <text class="ns" x="500" y="496">one JSON line per request from Envoy, on the gateway pod's stdout</text>
+      <text class="ns" x="500" y="511">→ OpenShift Logging (Loki) → console: Observe, Logs</text>
+      <text class="ns" x="500" y="526">carries the request id, route, path, response code and the</text>
+      <text class="ns" x="500" y="541">consumer identity and plan Authorino attached</text>
+      <text class="mono" x="500" y="562">{route="orders", user="store-key-gold", plan="gold", code=200}</text>
+      <text class="ns" x="500" y="582" style="fill:#8fe6f5">answers: who, when, which call, allowed or denied · replay of one actor</text>
+      <g filter="url(#soft)"><rect class="node n-cyan" x="936" y="456" width="430" height="150" rx="10"/></g>
+      <text class="nt" x="950" y="478">Traces</text><text class="st" x="1226" y="478" style="fill:#9fb0d0">OPTIONAL · NOT WIRED TODAY</text>
+      <text class="ns" x="950" y="496">Envoy, Authorino and Limitador emit one span each per request</text>
+      <text class="ns" x="950" y="511">→ Red Hat build of OpenTelemetry (collector) → Tempo</text>
+      <text class="ns" x="950" y="526">→ console: Observe, Traces · the same request id joins log and span</text>
+      <text class="ns" x="950" y="541">switched on in the Kuadrant, Authorino and Limitador resources</text>
+      <text class="mono" x="950" y="562">span: gateway → authorino.check → limitador.ratelimit → orders</text>
+      <text class="ns" x="950" y="582" style="fill:#8fe6f5">answers: where the time went inside one call · one call, end to end</text>
+      <path id="s1" class="wire w-sig" marker-end="url(#arrC)" d="M 1050,328 L 1050,400 L 250,400 L 250,456"/>
+      <path id="s2" class="wire w-sig" marker-end="url(#arrC)" d="M 1120,328 L 1120,400 L 700,400 L 700,456"/>
+      <path id="s3" class="wire w-sig" marker-end="url(#arrC)" d="M 1150,328 L 1150,456"/>
+    </g>
+
+    <!-- ===== CHANGE + RETIRE ===== -->
+    <g id="ops" class="L">
+      <rect class="zone" x="20" y="636" width="1360" height="184" rx="14"/>
+      <text class="band" x="36" y="660" style="fill:#cbd5e1">TWO MORE THINGS THE DEMO SHOWS</text>
+      <rect class="chipr c-gold" x="36" y="672" width="660" height="134" rx="8"/>
+      <text class="wl" x="50" y="694" style="fill:var(--ink)">A central team changes a policy</text>
+      <text class="ns" x="50" y="712">One pull request on the gateway-level AuthPolicy (require a Keycloak JWT for production,</text>
+      <text class="ns" x="50" y="727">or lower the silver limit). GitOps applies it; the next call gets the new answer.</text>
+      <text class="ns" x="50" y="742">The application team did nothing. The change, its author and its reviewer are in Git;</text>
+      <text class="ns" x="50" y="757">the apply is in the Kubernetes audit log. Sean's first must-have.</text>
+      <text class="st" x="50" y="790" style="fill:#34d399">AUTHPOLICY, RATELIMITPOLICY, GITOPS: GA</text>
+      <rect class="chipr c-std" x="716" y="672" width="650" height="134" rx="8"/>
+      <text class="wl" x="730" y="694" style="fill:var(--ink)">The developer retires it</text>
+      <text class="ns" x="730" y="712">The "Retire API" action removes the Argo Application; namespace, route, policies,</text>
+      <text class="ns" x="730" y="727">product and catalog entry go with it. Spin up, test the whole gamut, tear down,</text>
+      <text class="ns" x="730" y="742">self-service: the throwaway real endpoint instead of a mock, or in front of one.</text>
+      <text class="ns" x="730" y="757">Rerun the template with "backend: mock from the spec" for a contract-first API.</text>
+      <text class="st" x="730" y="790" style="fill:#9fb0d0">MOCK SERVER (MICROCKS OR PRISM): COMMUNITY CONTAINER, LABELLED AS SUCH</text>
+    </g>
+
+    <!-- ===== dots ===== -->
+    <g id="dotsCfg" class="fade" fill="#cbd5e1" filter="url(#glow)">
+      <circle r="3.5"><animateMotion dur="1.6s" begin="0s" repeatCount="indefinite"><mpath href="#c1"/></animateMotion></circle>
+      <circle r="3.5"><animateMotion dur="1.2s" begin="0.8s" repeatCount="indefinite"><mpath href="#c3"/></animateMotion></circle>
+    </g>
+    <g id="dotsKey" class="fade off" fill="var(--violet)" filter="url(#glow)">
+      <circle r="3.5"><animateMotion dur="2.2s" begin="0s" repeatCount="indefinite"><mpath href="#k1"/></animateMotion></circle>
+    </g>
+    <g id="dotsReq" class="fade off" fill="var(--gold)" filter="url(#glow)">
+      <circle r="4.5"><animateMotion dur="0.8s" begin="0s" repeatCount="indefinite"><mpath href="#r1"/></animateMotion></circle>
+      <circle r="4.5"><animateMotion dur="0.8s" begin="0.8s" repeatCount="indefinite"><mpath href="#r2"/></animateMotion></circle>
+      <circle r="4.5"><animateMotion dur="0.8s" begin="1.6s" repeatCount="indefinite"><mpath href="#r3"/></animateMotion></circle>
+      <circle r="4.5"><animateMotion dur="0.8s" begin="2.4s" repeatCount="indefinite"><mpath href="#r4"/></animateMotion></circle>
+      <circle r="4.5"><animateMotion dur="1.2s" begin="3.2s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear"><mpath href="#r5"/></animateMotion></circle>
+    </g>
+    <g id="dotsSig" class="fade off" fill="var(--cyan)" filter="url(#glow)">
+      <circle r="3.5"><animateMotion dur="2.6s" begin="0s" repeatCount="indefinite"><mpath href="#s1"/></animateMotion></circle>
+      <circle r="3.5"><animateMotion dur="2.2s" begin="0.5s" repeatCount="indefinite"><mpath href="#s2"/></animateMotion></circle>
+      <circle r="3.5"><animateMotion dur="1.6s" begin="1s" repeatCount="indefinite"><mpath href="#s3"/></animateMotion></circle>
+    </g>
+  </svg>
+  </div>
+
+  <div class="steps" id="steps"></div>
+  <p class="cap" id="cap"></p>
+  <div class="legend">
+    <span><span class="dot" style="background:#cbd5e1"></span><b>configuration</b> — template to Git to GitOps to namespace</span>
+    <span><span class="dot" style="background:var(--violet)"></span><b>a key request and its approval</b></span>
+    <span><span class="dot" style="background:var(--gold)"></span><b>one API call</b> through the gateway</span>
+    <span><span class="dot" style="background:var(--cyan)"></span><b>signals</b> — metric, log line, span</span>
+  </div>
+  <p class="key" id="key"><b>Three ledgers answer "who did what".</b> Developer Hub's audit log for what developers did in the portal; Git and the Kubernetes audit log for every policy, plan and approval; the gateway's metrics, access log and traces for every call.</p>
+</div>
+<script>
+const steps = [
+  { t:"The template", cap:"<b>A developer fills in one template.</b> Name, the OpenAPI file, an owner, the plans, test or production, and whether the backend is their image or a mock generated from the spec. Developer Hub writes a Git repository with everything the API needs (the spec, Deployment and Service, HTTPRoute, AuthPolicy, PlanPolicy, RateLimitPolicy, APIProduct, catalog entry) and records the run, the actor and the result in its audit log. Sean's third must-have: catalog from the Swagger file, deployment from a template.", layers:["hub","git"], dots:["dotsCfg"], hl:["hub"] },
+  { t:"GitOps builds it", cap:"<b>OpenShift GitOps builds the namespace.</b> An ApplicationSet notices the new api-* repository and syncs it into a fresh namespace with a quota. Two minutes later the route answers on the Connectivity Link gateway with TLS and DNS. The API appears on its catalog page in Developer Hub with the spec rendered, and on the console's API Products page. Nobody logged in to a cluster.", layers:["hub","git","ns"], dots:["dotsCfg"], hl:["ns"] },
+  { t:"A key, approved", cap:"<b>A consumer asks, an owner approves.</b> From the API's page a consumer requests access on the bronze plan. Developer Hub writes an APIKey in the consumer's namespace; the controller turns it into an APIKeyRequest next to the product; the owner approves it in Developer Hub or in the console, and the approval records who and when. The enforcement Secret that Authorino reads appears in kuadrant-system. Sean's self-service keys, with ledger 2 written as a side effect.", layers:["hub","git","ns"], dots:["dotsKey"], hl:["ns"] },
+  { t:"One call", cap:"<b>One call through the gateway.</b> Envoy matches the host and path, then runs the policies before forwarding: Authorino validates the key and attaches the identity and plan (no key: 401; wrong caller: 403); Limitador counts against the plan and against the source address (the 21st bronze call of the day, or a burst from one address: 429); the backend answers 200. The request id travels with the call into every signal. Sean's second must-have: limits per client, per plan, per address.", layers:["hub","git","ns","gw"], dots:["dotsReq"], hl:["gw"] },
+  { t:"Three signals", cap:"<b>Every call leaves three signals, and that is ledger 3.</b> Metrics are built and generally available today: Prometheus, Thanos, the Kuadrant dashboards in Grafana. The access log is the plan for Thursday: Envoy already writes one JSON line per request with the request id, route, response code and the consumer identity; OpenShift Logging with Loki makes it a console query, which is the replay of one actor Sean asked for. Traces are optional and not wired today: Red Hat build of OpenTelemetry and Tempo would add one span per component per call, joined to the log by the same request id.", layers:["hub","git","ns","gw","sig"], dots:["dotsSig"], hl:["sig"] },
+  { t:"Change and retire", cap:"<b>Two more things the demo shows.</b> A central team merges one pull request on the gateway-level AuthPolicy and the next call gets the new answer, with the author, reviewer and apply time in Git and the Kubernetes audit log: Sean's first must-have. Then the developer retires the API and everything it created disappears. That is the throwaway real endpoint: spin up, test the whole gamut, tear down; rerun with a mock backend when the API is designed before it is built.", layers:["hub","git","ns","gw","sig","ops"], dots:[], hl:["ops"] },
+];
+const $ = id => document.getElementById(id);
+const ALL_L = ["hub","git","ns","gw","sig","ops"];
+const ALL_D = ["dotsCfg","dotsKey","dotsReq","dotsSig"];
+let cur = 0, auto = true, timer = null;
+function render(i){
+  cur = i; const s = steps[i];
+  ALL_L.forEach(id => $(id).classList.toggle('on', s.layers.includes(id)));
+  ALL_D.forEach(id => $(id).classList.toggle('off', !s.dots.includes(id)));
+  ALL_L.forEach(id => $(id).classList.toggle('hl', (s.hl||[]).includes(id)));
+  $('cap').innerHTML = `<span class="k">Step ${i+1} of ${steps.length}</span>` + s.cap;
+  document.querySelectorAll('.step').forEach((b,k)=>b.classList.toggle('active', k===i));
+}
+function build(){
+  const box = $('steps');
+  steps.forEach((s,i)=>{ const b=document.createElement('button'); b.className='step'; b.innerHTML=`<span class="n">${i+1}</span>${s.t}`; b.onclick=()=>{stop(); render(i);}; box.appendChild(b); });
+  const ctl=document.createElement('div'); ctl.className='ctl';
+  ctl.innerHTML='<button id="prev">‹ Prev</button><button id="next">Next ›</button><button id="play">Auto-play</button>'; box.appendChild(ctl);
+  $('prev').onclick=()=>{stop(); render((cur+steps.length-1)%steps.length);};
+  $('next').onclick=()=>{stop(); render((cur+1)%steps.length);};
+  $('play').onclick=()=>{ auto ? stop() : start(); };
+}
+function start(){ auto=true; $('play').textContent='Pause'; timer=setInterval(()=>render((cur+1)%steps.length), 9000); }
+function stop(){ auto=false; $('play').textContent='Auto-play'; if(timer){clearInterval(timer); timer=null;} }
+document.addEventListener('keydown', e=>{ if(e.key==='ArrowRight'){stop(); render((cur+1)%steps.length);} if(e.key==='ArrowLeft'){stop(); render((cur+steps.length-1)%steps.length);} if(e.key===' '){e.preventDefault(); auto?stop():start();} });
+build();
+const h = new URLSearchParams(location.hash.slice(1)); const st = parseInt(h.get('step')||'1',10)-1; render(isNaN(st)?0:Math.max(0,Math.min(steps.length-1,st)));
+if (h.get('auto')==='0') { auto=false; $('play').textContent='Auto-play'; } else start();
+</script>
+</body>
+</html>
