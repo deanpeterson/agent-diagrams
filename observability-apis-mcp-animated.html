@@ -100,10 +100,10 @@
 <body>
 <div class="wrap">
   <h1>One monitoring stack for APIs and MCP — <span class="accent">three signals from one gateway</span></h1>
-  <p class="sub">Every API call and every MCP tool call passes the same Envoy, so they produce the same metrics, traces and access logs; the MCP router adds the tool, the server, the session and the caller's identity. Red Hat OpenShift AI adds the view from inside the agent: MLflow traces and EvalHub, on the same OpenTelemetry pipeline.</p>
+  <p class="sub">Every API call and every MCP tool call passes the same Envoy, so they produce the same metrics, traces and access logs; the MCP router adds the tool, the server, the session and the caller's identity. The Cluster Observability Operator puts dashboards (Red Hat build of Perses), logs and traces in the OpenShift console; the dashboards are code, created with each API. Red Hat OpenShift AI adds the view from inside the agent: MLflow traces and EvalHub, on the same OpenTelemetry pipeline.</p>
 
   <div class="card">
-  <svg viewBox="0 0 1400 830" role="img" aria-label="Animated diagram: API clients and agents call through one Connectivity Link gateway, which emits metrics to OpenShift monitoring and Grafana, traces to Red Hat build of OpenTelemetry and the distributed tracing platform, and access logs with the MCP audit trail to OpenShift Logging">
+  <svg viewBox="0 0 1400 830" role="img" aria-label="Animated diagram: API clients and agents call through one Connectivity Link gateway, which emits metrics to OpenShift monitoring and Perses dashboards in the console (Cluster Observability Operator), traces to Red Hat build of OpenTelemetry and the distributed tracing platform, and access logs with the caller's identity and the MCP audit trail to OpenShift Logging">
     <defs>
       <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
         <feGaussianBlur stdDeviation="3.2" result="b"/>
@@ -202,19 +202,19 @@
 
     <!-- ===== METRICS lane ===== -->
     <g id="laneM" class="lane">
-      <text class="band" x="930" y="128" style="fill:#9ff0d0">METRICS · Envoy + components + Gateway API state</text>
+      <text class="band" x="930" y="128" style="fill:#9ff0d0">METRICS · Envoy + components + state · consumer labels</text>
       <path id="mW" class="wire w-m" d="M 1130,176 L 1170,176"/>
       <g filter="url(#soft)"><rect class="node n-green" x="930" y="146" width="200" height="60" rx="12"/></g>
       <text class="nt" x="1030" y="167" text-anchor="middle" style="font-size:13px">OpenShift monitoring</text>
       <text class="ns" x="1030" y="184" text-anchor="middle">user workload monitoring</text>
       <text class="ns" x="1030" y="198" text-anchor="middle">Prometheus · Thanos · Alertmanager</text>
       <g filter="url(#soft)"><rect class="node n-green" x="1170" y="146" width="200" height="60" rx="12"/></g>
-      <text class="nt" x="1270" y="167" text-anchor="middle" style="font-size:13px">Grafana + alerts</text>
-      <text class="ns" x="1270" y="184" text-anchor="middle">3 Kuadrant dashboards · alert rules</text>
-      <text class="ns" x="1270" y="198" text-anchor="middle">multi-burn + SLO alerts (Sloth)</text>
+      <text class="nt" x="1270" y="167" text-anchor="middle" style="font-size:13px">Perses dashboards</text>
+      <text class="ns" x="1270" y="184" text-anchor="middle">Cluster Observability Operator</text>
+      <text class="ns" x="1270" y="198" text-anchor="middle">as code: 5 per API + platform view</text>
       <text class="badge" x="930" y="224" style="fill:var(--green)">GA STACK</text>
-      <text class="ns" x="994" y="224">dashboards and alerts are templates to adapt, not a production setup</text>
-      <text class="ns" x="930" y="244">LLM APIs: TokenRateLimitPolicy meters tokens · MaaS dashboard (Tech Preview)</text>
+      <text class="ns" x="994" y="224">TelemetryPolicy (Tech Preview): counters carry user_id and plan</text>
+      <text class="ns" x="930" y="244">Grafana templates + alerts (multi-burn, SLO) alongside · LLM tokens metered</text>
       <rect id="focM" class="focus" x="920" y="112" width="460" height="122" rx="14" stroke="var(--green)"/>
       <g fill="var(--green)" filter="url(#glow)">
         <circle r="4.5"><animateMotion dur="2.4s" begin="0s" repeatCount="indefinite"><mpath href="#fM"/></animateMotion></circle>
@@ -230,13 +230,13 @@
       <g filter="url(#soft)"><rect class="node n-violet" x="930" y="322" width="200" height="60" rx="12"/></g>
       <text class="nt" x="1030" y="343" text-anchor="middle" style="font-size:13px">Red Hat build of</text>
       <text class="nt" x="1030" y="359" text-anchor="middle" style="font-size:13px">OpenTelemetry</text>
-      <text class="ns" x="1030" y="374" text-anchor="middle">collector · data and control plane</text>
+      <text class="ns" x="1030" y="374" text-anchor="middle">collector · injected language agent</text>
       <g filter="url(#soft)"><rect class="node n-violet" x="1170" y="322" width="200" height="60" rx="12"/></g>
       <text class="nt" x="1270" y="343" text-anchor="middle" style="font-size:13px">Distributed tracing</text>
       <text class="nt" x="1270" y="359" text-anchor="middle" style="font-size:13px">platform (Tempo)</text>
-      <text class="ns" x="1270" y="374" text-anchor="middle">read in the OpenShift console</text>
+      <text class="ns" x="1270" y="374" text-anchor="middle">read in the console (COO)</text>
       <text class="badge" x="930" y="400" style="fill:var(--violet)">GA STACK</text>
-      <text class="ns" x="994" y="400">router spans: Tech Preview gateway · x-request-id on each span</text>
+      <text class="ns" x="994" y="400">one trace: Authorino, Limitador, gateway, services (traceparent)</text>
       <rect id="focT" class="focus" x="920" y="288" width="460" height="122" rx="14" stroke="var(--violet)"/>
       <g fill="var(--violet)" filter="url(#glow)">
         <circle r="4.5"><animateMotion dur="2.6s" begin="0.3s" repeatCount="indefinite"><mpath href="#fT"/></animateMotion></circle>
@@ -247,18 +247,18 @@
 
     <!-- ===== LOGS lane ===== -->
     <g id="laneL" class="lane">
-      <text class="band" x="930" y="480" style="fill:#8fe6f5">LOGS · access log (Istio Telemetry) + MCP audit trail</text>
+      <text class="band" x="930" y="480" style="fill:#8fe6f5">LOGS · access log with identity + audit trails</text>
       <path id="lW" class="wire w-l" d="M 1130,528 L 1170,528"/>
       <g filter="url(#soft)"><rect class="node n-cyan" x="930" y="498" width="200" height="60" rx="12"/></g>
       <text class="nt" x="1030" y="519" text-anchor="middle" style="font-size:13px">Access log + audit trail</text>
-      <text class="ns" x="1030" y="536" text-anchor="middle">request_id · route · status · latency</text>
-      <text class="ns" x="1030" y="550" text-anchor="middle">tool · server · session · identity headers</text>
+      <text class="ns" x="1030" y="536" text-anchor="middle">user_id · plan · status · latency</text>
+      <text class="ns" x="1030" y="550" text-anchor="middle">MCP: tool · server · session</text>
       <g filter="url(#soft)"><rect class="node n-cyan" x="1170" y="498" width="200" height="60" rx="12"/></g>
       <text class="nt" x="1270" y="519" text-anchor="middle" style="font-size:13px">OpenShift Logging (Loki)</text>
-      <text class="ns" x="1270" y="536" text-anchor="middle">S3-backed retention for tool-call logs</text>
-      <text class="ns" x="1270" y="550" text-anchor="middle">Authorino and Limitador logs beside it</text>
+      <text class="ns" x="1270" y="536" text-anchor="middle">console · S3-backed retention</text>
+      <text class="ns" x="1270" y="550" text-anchor="middle">+ the Developer Hub audit log</text>
       <text class="badge" x="930" y="576" style="fill:var(--cyan)">GA STACK</text>
-      <text class="ns" x="994" y="576">one line: who called what tool, on which server, in which session, when</text>
+      <text class="ns" x="994" y="576">each call: consumer, plan, decision · each change: who did it, when</text>
       <rect id="focL" class="focus" x="920" y="464" width="460" height="122" rx="14" stroke="var(--cyan)"/>
       <g fill="var(--cyan)" filter="url(#glow)">
         <circle r="4.5"><animateMotion dur="2.8s" begin="0.6s" repeatCount="indefinite"><mpath href="#fL"/></animateMotion></circle>
@@ -313,31 +313,31 @@
       <text class="band" x="30" y="758">WHO LOOKS WHERE</text>
       <rect class="chipr c-std" x="30" y="768" width="258" height="58" rx="9"/>
       <text class="nt" x="42" y="788" style="font-size:12px">Platform engineer</text>
-      <text class="ns" x="42" y="804">Grafana platform dashboard: errors, latency,</text>
-      <text class="ns" x="42" y="818">throughput, policy state · the alerts</text>
+      <text class="ns" x="42" y="804">Governed APIs platform dashboard: every API,</text>
+      <text class="ns" x="42" y="818">what policy stopped, GitOps and policy state</text>
       <rect class="chipr c-std" x="300" y="768" width="258" height="58" rx="9"/>
       <text class="nt" x="312" y="788" style="font-size:12px">Application developer</text>
-      <text class="ns" x="312" y="804">per-API, per-path, per-tool dashboard ·</text>
-      <text class="ns" x="312" y="818">the trace of one slow or failed call</text>
+      <text class="ns" x="312" y="804">the API's own dashboards: traffic, decisions,</text>
+      <text class="ns" x="312" y="818">cost, posture · the trace of one call</text>
       <rect class="chipr c-std" x="570" y="768" width="258" height="58" rx="9"/>
       <text class="nt" x="582" y="788" style="font-size:12px">AI engineer</text>
       <text class="ns" x="582" y="804">MLflow call tree of the agent's run ·</text>
       <text class="ns" x="582" y="818">EvalHub scores and EvalCards</text>
       <rect class="chipr c-std" x="840" y="768" width="258" height="58" rx="9"/>
       <text class="nt" x="852" y="788" style="font-size:12px">Business user</text>
-      <text class="ns" x="852" y="804">business dashboard: usage by API,</text>
-      <text class="ns" x="852" y="818">by consumer, by tool</text>
+      <text class="ns" x="852" y="804">consumers and plans: usage by consumer,</text>
+      <text class="ns" x="852" y="818">by plan, allowance used today</text>
       <rect class="chipr c-std" x="1110" y="768" width="260" height="58" rx="9"/>
       <text class="nt" x="1122" y="788" style="font-size:12px">Auditor, security</text>
-      <text class="ns" x="1122" y="804">MCP audit trail in Loki: who called what,</text>
-      <text class="ns" x="1122" y="818">on which server, in which session</text>
+      <text class="ns" x="1122" y="804">Loki: every call with its consumer ·</text>
+      <text class="ns" x="1122" y="818">Dev Hub audit log · Git history · MCP trail</text>
     </g>
   </svg>
 
   <div class="samples" id="samples">
-    <div class="ln m" id="sm"><span class="who">metric</span><span class="hi">envoy_cluster_upstream_rq_total</span>{route_name="mcp-inventory", response_code="200"}  41   ·   one series per route, per status; Limitador and Authorino add their own counters</div>
+    <div class="ln m" id="sm"><span class="who">metric</span><span class="hi">authorized_calls</span>{limitador_namespace="api-price-check/price-check-api", <span class="hi">user_id="deanpeterson"</span>, plan="silver"}  12   ·   the policy engine's own count, per consumer and plan (TelemetryPolicy); Envoy adds istio_requests_total per route, path and status</div>
     <div class="ln t" id="st"><span class="who">span</span><span class="hi">mcp-router.tool-call</span>  tool=inventory_search  server=inventory  x-request-id=7f3a…  84 ms   ·   child of mcp-router.process, after mcp-router.route-decision</div>
-    <div class="ln l" id="sl"><span class="who">log line</span>{"request_id":"7f3a…","route_name":"mcp-inventory","<span class="hi">x-auth-identity":"alex"</span>,"<span class="hi">x-mcp-toolname":"inventory_search"</span>,"x-mcp-servername":"inventory","mcp-session-id":"c9d1…","response_code":200,"duration":84}</div>
+    <div class="ln l" id="sl"><span class="who">log line</span>{"request_id":"7f3a…","route_name":"mcp-inventory","<span class="hi">user_id":"alex"</span>,"plan":"silver","<span class="hi">x-mcp-toolname":"inventory_search"</span>,"x-mcp-servername":"inventory","mcp-session-id":"c9d1…","response_code":200,"duration":84}</div>
     <div class="ln a" id="sa"><span class="who">agent trace</span><span class="hi">mlflow</span>  agent.run › llm.call 2.48 s, 1,204 tokens › <span class="hi">tool.call inventory_search</span> 84 ms (trace 7f3a… continues in the gateway's router span) › llm.call 1.1 s › answer</div>
     <div class="note">Illustrative samples; field names follow the Connectivity Link 1.4 observability guide (access-log format variables, router span names, audit headers) and MLflow's span model.</div>
   </div>
@@ -354,12 +354,12 @@
 
   <div class="legend">
     <span class="chip"><span class="sw" style="color:var(--gold)"></span><b>a request</b> — API call or MCP tool call</span>
-    <span class="chip"><span class="sw" style="color:var(--green)"></span><b>metrics</b> — OpenShift monitoring, Grafana, Alertmanager</span>
+    <span class="chip"><span class="sw" style="color:var(--green)"></span><b>metrics</b> — OpenShift monitoring, Perses dashboards (Cluster Observability Operator), Alertmanager</span>
     <span class="chip"><span class="sw" style="color:var(--violet)"></span><b>traces</b> — Red Hat build of OpenTelemetry, distributed tracing platform</span>
-    <span class="chip"><span class="sw" style="color:var(--cyan)"></span><b>logs</b> — Istio Telemetry access log, OpenShift Logging</span>
+    <span class="chip"><span class="sw" style="color:var(--cyan)"></span><b>logs</b> — Istio Telemetry access log with identity, OpenShift Logging, Developer Hub audit log</span>
     <span class="chip"><span class="sw" style="color:var(--rose)"></span><b>inside the agent</b> — MLflow tracing and EvalHub in OpenShift AI (AgentOps)</span>
   </div>
-  <p class="key"><b>One stack, not two.</b> Because APIs and MCP tools cross the same Envoy, the observability you already run for APIs is the observability you get for agents. The additions are the MCP router's headers and spans, one Loki retention policy for the audit trail, and MLflow in OpenShift AI for the view from inside the agent, on the same OpenTelemetry pipeline.</p>
+  <p class="key"><b>One stack, not two.</b> Because APIs and MCP tools cross the same Envoy, the observability you already run for APIs is the observability you get for agents. The Cluster Observability Operator puts all three in the console, and the dashboards are code that arrives with each API. The additions for agents are the MCP router's headers and spans, one Loki retention policy for the audit trail, and MLflow in OpenShift AI for the view from inside the agent, on the same OpenTelemetry pipeline.</p>
 </div>
 
 <script>
@@ -369,15 +369,15 @@
     { name:"One gateway", lanes:[], samples:[], who:true,
       t:"<b>One gateway, two kinds of traffic.</b> An app calling an API and an agent calling a tool cross the same Envoy, the same wasm-shim, the same Authorino and Limitador. So every request, API or MCP, produces the same three signals, tagged with an x-request-id. The MCP router adds four more facts: the tool, the server, the session, and, through Authorino, the caller's identity. Inside the agent, OpenShift AI adds a second vantage point (step 5)." },
     { name:"Metrics", lanes:["M"], samples:["sm"],
-      t:"<b>Metrics.</b> Envoy request metrics, the components' own counters (Authorino, Limitador, the DNS operator) and Gateway API state metrics are scraped by OpenShift user workload monitoring. Connectivity Link ships example Grafana dashboards, Kuadrant templates, for the platform engineer, the application developer and the business user, PrometheusRule templates with multi-window multi-burn alerts, and SLO alerts generated with Sloth. For MCP that means tool-call patterns, success and error rates. The stack is GA; the dashboards and alerts are templates to adapt." },
+      t:"<b>Metrics.</b> Envoy request metrics, the components' own counters (Authorino, Limitador, the DNS operator) and Gateway API state metrics are scraped by OpenShift user workload monitoring. The Cluster Observability Operator shows them in the OpenShift console as Red Hat build of Perses dashboards, and the dashboards are code: the template that publishes an API creates five with it (traffic, policy decisions, the cost of governance, governance posture, consumers and plans), and the platform team has one view across every API. A TelemetryPolicy on the gateway (Technology Preview) labels the policy engine's counters with the consumer's user id and plan, so usage per consumer is a metric, not a log search. Connectivity Link's Grafana templates, multi-window multi-burn alerts and Sloth SLO alerts sit alongside. For MCP that means tool-call patterns, success and error rates." },
     { name:"Traces", lanes:["T"], samples:["st"],
-      t:"<b>Traces.</b> Data-plane spans follow a request through Istio, the wasm-shim, Authorino and Limitador; the MCP router adds its own: mcp-router.process, route-decision, then tool-call or broker-passthrough. Control-plane traces show policy reconciliation, so you can line up “policy applied at 15:30:05” with “request at 15:30:10”. Red Hat build of OpenTelemetry collects, the distributed tracing platform (Tempo) stores, the OpenShift console shows." },
+      t:"<b>Traces.</b> Data-plane spans follow a request through Istio, the wasm-shim, Authorino and Limitador; the MCP router adds its own: mcp-router.process, route-decision, then tool-call or broker-passthrough. Control-plane traces show policy reconciliation, so you can line up “policy applied at 15:30:05” with “request at 15:30:10”. The OpenTelemetry operator injects the language agent into the API's pod from an Instrumentation resource, no code change; a client that sends a W3C traceparent joins Authorino, Limitador, the gateway and the downstream services into one trace. Red Hat build of OpenTelemetry collects, the distributed tracing platform (Tempo) stores, the console shows it through the Cluster Observability Operator." },
     { name:"Logs and audit trail", lanes:["L"], samples:["sl"],
-      t:"<b>Logs and the audit trail.</b> One Istio Telemetry resource switches on JSON access logs for the gateway pods, with request_id, route_name, status and timing. The MCP gateway's routing headers (x-mcp-method, x-mcp-toolname, x-mcp-servername, mcp-session-id) and the x-auth-identity header Authorino injects from the token go into the same line, on both listeners. OpenShift Logging (Loki) keeps them, with S3 storage for long-term tool-call logs. The line says who called what tool, on which server, in which session, at what time." },
+      t:"<b>Logs and the audit trail.</b> One Istio Telemetry resource switches on JSON access logs for the gateway pods, with request_id, route, status, timing and the identity the AuthPolicy verified: user_id and plan on every line, so a filter by consumer or by response code is the audit trail of the API. The MCP gateway's routing headers (x-mcp-method, x-mcp-toolname, x-mcp-servername, mcp-session-id) and the x-auth-identity header Authorino injects from the token go into the same line, on both listeners. OpenShift Logging (Loki) keeps them, with S3 storage for long-term retention, read in the console through the Cluster Observability Operator; Developer Hub's audit log is forwarded beside them: who ran which template, who registered or unregistered what. The MCP line says who called what tool, on which server, in which session, at what time." },
     { name:"Inside the agent", lanes:[], samples:["sa","st"], agent:true,
       t:"<b>Inside the agent: MLflow and AgentOps.</b> The gateway sees every tool call at the boundary; it cannot see why the agent made it. That view lives in Red Hat OpenShift AI: MLflow tracing records the agent's run as a call tree, prompt, model call, tool call, answer, with inputs, outputs, tokens and latency. MLflow has been a managed, generally available component since 3.4; the call-tree view inside Gen AI Studio and the OpenCode integration are Technology Preview in 3.5. MLflow tracing is OpenTelemetry-compatible and propagates trace context across services, so the agent's spans, the gateway's router spans and the server's spans can share one trace. EvalHub, GA in 3.5, evaluates agents on those traces. AgentOps is Red Hat's name for the layer: tracing, observability, cryptographic identity and lifecycle management for agents." },
     { name:"Correlate, then look", lanes:["M","T","L"], samples:["sm","st","sl","sa"], who:true,
-      t:"<b>Correlate, then look.</b> The x-request-id Envoy generates is in the access log and on the span, so a dashboard can jump from a log line to its trace and back; with propagated context the agent's MLflow trace continues into the gateway's router span. Then each role has its place: the platform engineer in the platform dashboard and the alerts, the developer in the per-API and per-tool view and the traces, the AI engineer in MLflow and EvalHub, the business user in the business dashboard, the auditor in the MCP audit trail in Loki." }
+      t:"<b>Correlate, then look.</b> The x-request-id Envoy generates is in the access log and on the span, so a dashboard can jump from a log line to its trace and back; with propagated context the agent's MLflow trace continues into the gateway's router span. Then each role has its place: the platform engineer in the Governed APIs dashboard and the alerts, the developer in the API's own dashboards and the traces, the AI engineer in MLflow and EvalHub, the business user in consumers and plans, the auditor in Loki (every call with its consumer), Developer Hub's audit log and the Git history." }
   ];
   const N = steps.length;
   const hash = new URLSearchParams(location.hash.replace(/^#/,''));
