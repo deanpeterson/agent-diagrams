@@ -150,7 +150,7 @@
       <text class="mono" x="50" y="562">istio_requests_total{destination_service_name="orders"}</text>
       <text class="ns" x="50" y="582" style="fill:#8fe6f5">answers: how much, how fast, how many denied, growth over time</text>
       <g filter="url(#soft)"><rect class="node n-cyan" x="486" y="456" width="430" height="150" rx="10"/></g>
-      <text class="nt" x="500" y="478">Access log</text><text class="st" x="790" y="478" style="fill:#fbbf24">PLANNED FOR THURSDAY</text>
+      <text class="nt" x="500" y="478">Access log</text><text class="st" x="790" y="478" style="fill:#34d399">BUILT · LOKI · GA</text>
       <text class="ns" x="500" y="496">one JSON line per request from Envoy, on the gateway pod's stdout</text>
       <text class="ns" x="500" y="511">→ OpenShift Logging (Loki) → console: Observe, Logs</text>
       <text class="ns" x="500" y="526">carries the request id, route, path, response code and the</text>
@@ -158,12 +158,12 @@
       <text class="mono" x="500" y="562">{route="orders", user="store-key-gold", plan="gold", code=200}</text>
       <text class="ns" x="500" y="582" style="fill:#8fe6f5">answers: who, when, which call, allowed or denied · replay of one actor</text>
       <g filter="url(#soft)"><rect class="node n-cyan" x="936" y="456" width="430" height="150" rx="10"/></g>
-      <text class="nt" x="950" y="478">Traces</text><text class="st" x="1226" y="478" style="fill:#9fb0d0">OPTIONAL · NOT WIRED TODAY</text>
+      <text class="nt" x="950" y="478">Traces</text><text class="st" x="1226" y="478" style="fill:#34d399">BUILT · TEMPO · GA</text>
       <text class="ns" x="950" y="496">Envoy, Authorino and Limitador emit one span each per request</text>
       <text class="ns" x="950" y="511">→ Red Hat build of OpenTelemetry (collector) → Tempo</text>
       <text class="ns" x="950" y="526">→ console: Observe, Traces · the same request id joins log and span</text>
-      <text class="ns" x="950" y="541">switched on in the Kuadrant, Authorino and Limitador resources</text>
-      <text class="mono" x="950" y="562">span: gateway → authorino.check → limitador.ratelimit → orders</text>
+      <text class="ns" x="950" y="541">gateway span + auto-instrumented backends; policy spans stand alone (wasm gap)</text>
+      <text class="mono" x="950" y="562">trace: gateway 34 ms → orders 31 ms → inventory 4 ms (5 spans)</text>
       <text class="ns" x="950" y="582" style="fill:#8fe6f5">answers: where the time went inside one call · one call, end to end</text>
       <path id="s1" class="wire w-sig" marker-end="url(#arrC)" d="M 1050,328 L 1050,400 L 250,400 L 250,456"/>
       <path id="s2" class="wire w-sig" marker-end="url(#arrC)" d="M 1120,328 L 1120,400 L 700,400 L 700,456"/>
@@ -229,7 +229,7 @@ const steps = [
   { t:"GitOps builds it", cap:"<b>OpenShift GitOps builds the namespace.</b> An ApplicationSet notices the new api-* repository and syncs it into a fresh namespace with a quota. Two minutes later the route answers on the Connectivity Link gateway with TLS and DNS. The API appears on its catalog page in Developer Hub with the spec rendered, and on the console's API Products page. Nobody logged in to a cluster.", layers:["hub","git","ns"], dots:["dotsCfg"], hl:["ns"] },
   { t:"A key, approved", cap:"<b>A consumer asks, an owner approves.</b> From the API's page a consumer requests access on the bronze plan. Developer Hub writes an APIKey in the consumer's namespace; the controller turns it into an APIKeyRequest next to the product; the owner approves it in Developer Hub or in the console, and the approval records who and when. The enforcement Secret that Authorino reads appears in kuadrant-system. Sean's self-service keys, with ledger 2 written as a side effect.", layers:["hub","git","ns"], dots:["dotsKey"], hl:["ns"] },
   { t:"One call", cap:"<b>One call through the gateway.</b> Envoy matches the host and path, then runs the policies before forwarding: Authorino validates the key and attaches the identity and plan (no key: 401; wrong caller: 403); Limitador counts against the plan and against the source address (the 21st bronze call of the day, or a burst from one address: 429); the backend answers 200. The request id travels with the call into every signal. Sean's second must-have: limits per client, per plan, per address.", layers:["hub","git","ns","gw"], dots:["dotsReq"], hl:["gw"] },
-  { t:"Three signals", cap:"<b>Every call leaves three signals, and that is ledger 3.</b> Metrics are built and generally available today: Prometheus, Thanos, the Kuadrant dashboards in Grafana. The access log is the plan for Thursday: Envoy already writes one JSON line per request with the request id, route, response code and the consumer identity; OpenShift Logging with Loki makes it a console query, which is the replay of one actor Sean asked for. Traces are optional and not wired today: Red Hat build of OpenTelemetry and Tempo would add one span per component per call, joined to the log by the same request id.", layers:["hub","git","ns","gw","sig"], dots:["dotsSig"], hl:["sig"] },
+  { t:"Three signals", cap:"<b>Every call leaves three signals, and that is ledger 3.</b> All three are built and generally available products. Metrics: Prometheus, Thanos, the Kuadrant dashboards in Grafana and a Perses dashboard in the console. Access log: Envoy writes one JSON line per request with the request id, route, response code and the consumer identity and plan; OpenShift Logging with Loki makes it a console query, the replay of one actor Sean asked for. Traces: Red Hat build of OpenTelemetry and Tempo; one request is a five-span trace, the gateway's Envoy span, the orders service, its call to inventory, and the responses, joined by trace context with no code changes. Authorino's and Limitador's spans arrive too but stand alone: trace context does not cross the WebAssembly module, exactly as the guide documents.", layers:["hub","git","ns","gw","sig"], dots:["dotsSig"], hl:["sig"] },
   { t:"Change and retire", cap:"<b>Two more things the demo shows.</b> A central team merges one pull request on the gateway-level AuthPolicy and the next call gets the new answer, with the author, reviewer and apply time in Git and the Kubernetes audit log: Sean's first must-have. Then the developer retires the API and everything it created disappears. That is the throwaway real endpoint: spin up, test the whole gamut, tear down; rerun with a mock backend when the API is designed before it is built.", layers:["hub","git","ns","gw","sig","ops"], dots:[], hl:["ops"] },
 ];
 const $ = id => document.getElementById(id);
