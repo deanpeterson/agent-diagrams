@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"/>
+<title>What happens to every request</title>
+<style>
+  :root{color-scheme:dark;--bg:#0a0f1e;--ink:#e8eefc;--muted:#9fb0d0;--line:#26344f;--gold:#fbbf24;--cyan:#22d3ee;--green:#34d399;--violet:#a78bfa;--rose:#fb7185;--blue:#60a5fa}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,"Red Hat Text",Inter,"Segoe UI",sans-serif;width:1728px;height:1117px;overflow:hidden}
+  .card{position:absolute;inset:0;background:radial-gradient(1400px 700px at 30% -10%,#15203d 0%,#0a0f1e 60%)}
+  svg{position:absolute;inset:0;width:1728px;height:1117px}
+  .t{font-weight:700;font-size:30px;fill:var(--ink)} .s{font-size:19px;fill:var(--muted)}
+  .nt{font-weight:700;font-size:22px;fill:var(--ink)} .ns{font-size:16px;fill:var(--muted)}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:15px;fill:#bfeaf5}
+  .big{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:44px;font-weight:700}
+  .band{font-size:15px;font-weight:700;letter-spacing:1.5px;fill:var(--muted)}
+  .node{stroke-width:2}
+  .n-std{fill:#121a2e;stroke:#3b4a6b}.n-gold{fill:#161a2c;stroke:rgba(251,191,36,.7)}.n-cyan{fill:#0e1e34;stroke:rgba(34,211,238,.7)}
+  .n-blue{fill:#0f1b34;stroke:rgba(96,165,250,.8)}.n-violet{fill:#151332;stroke:rgba(167,139,250,.7)}.n-green{fill:#0d2321;stroke:rgba(52,211,153,.7)}.n-rose{fill:#2a1220;stroke:rgba(251,113,133,.7)}
+  .zone{fill:rgba(96,165,250,.04);stroke:rgba(96,165,250,.4);stroke-dasharray:8 9;stroke-width:2}
+  .wire{fill:none;stroke-width:2.5;stroke:rgba(251,191,36,.45)}
+  .g{opacity:0}
+</style>
+<style>
+  html,body{width:100%!important;height:100%!important;background:#0a0f1e}
+  #stage{position:fixed;left:50%;top:50%;width:1728px;height:1117px;transform-origin:center center}
+  #stage .card, #stage svg{position:absolute}
+  #pbar{position:fixed;left:0;bottom:0;height:4px;background:#fbbf24;width:0;z-index:5;opacity:.9}
+  #pctl{position:fixed;right:14px;bottom:14px;z-index:6;display:flex;gap:8px;font:13px -apple-system,"Red Hat Text",Inter,sans-serif}
+  #pctl button{background:#121a2e;color:#e8eefc;border:1px solid #3b4a6b;border-radius:8px;padding:6px 12px;cursor:pointer}
+  #pctl button:hover{border-color:#fbbf24}
+</style>
+</head>
+<body><div id="stage"><div class="card"></div>
+<svg viewBox="0 0 1728 1117" xmlns="http://www.w3.org/2000/svg">
+<defs><filter id="glow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+<text x="60" y="78" class="t">What happens to every request</text>
+<text x="60" y="112" class="s">The application is reached last, and only by calls that passed the two checks</text>
+
+<g id="zone" class="g"><rect x="420" y="190" width="900" height="300" rx="22" class="zone"/><text x="440" y="222" class="band">SHARED GATEWAY · Red Hat Connectivity Link</text></g>
+<g id="client" class="g"><rect x="60" y="280" width="260" height="120" rx="16" class="node n-gold"/><text x="190" y="330" text-anchor="middle" class="nt">Store app</text><text x="190" y="360" text-anchor="middle" class="mono">Authorization: Bearer ‹key›</text></g>
+<g id="gw" class="g"><rect x="460" y="280" width="200" height="120" rx="16" class="node n-cyan"/><text x="560" y="330" text-anchor="middle" class="nt">Gateway</text><text x="560" y="360" text-anchor="middle" class="ns">Envoy · api-gateway</text></g>
+<g id="auth" class="g"><rect x="720" y="280" width="260" height="120" rx="16" class="node n-violet"/><text x="850" y="320" text-anchor="middle" class="nt">Authorino</text><text x="850" y="346" text-anchor="middle" class="ns">is this key valid?</text><text x="850" y="372" text-anchor="middle" class="mono">→ consumer + plan</text></g>
+<g id="limit" class="g"><rect x="1040" y="280" width="260" height="120" rx="16" class="node n-violet"/><text x="1170" y="320" text-anchor="middle" class="nt">Limitador</text><text x="1170" y="346" text-anchor="middle" class="ns">within today's plan?</text><text x="1170" y="372" text-anchor="middle" class="mono">bronze: 20 / day</text></g>
+<g id="app" class="g"><rect x="1400" y="280" width="270" height="120" rx="16" class="node n-std"/><text x="1535" y="320" text-anchor="middle" class="nt">Application</text><text x="1535" y="346" text-anchor="middle" class="mono">x-auth-identity: deanpeterson</text><text x="1535" y="372" text-anchor="middle" class="mono">x-auth-plan: bronze</text></g>
+<path id="p1" class="wire" d="M320 340 L460 340"/>
+<path id="p2" class="wire" d="M660 340 L720 340"/>
+<path id="p3" class="wire" d="M980 340 L1040 340"/>
+<path id="p4" class="wire" d="M1300 340 L1400 340"/>
+<path id="pback" class="wire" d="M1400 395 C 1100 470, 700 470, 320 395" style="stroke:rgba(52,211,153,.45)"/>
+
+<!-- outcomes -->
+<g id="o200" class="g"><rect x="60" y="600" width="500" height="150" rx="18" class="node n-green"/><text x="90" y="660" class="big" fill="#34d399">200</text><text x="200" y="650" class="nt">valid key, within plan</text><text x="200" y="680" class="ns">the application answers; the gateway logs</text><text x="200" y="704" class="ns">user, plan, response, request id</text></g>
+<g id="o401" class="g"><rect x="614" y="600" width="500" height="150" rx="18" class="node n-rose"/><text x="644" y="660" class="big" fill="#fb7185">401</text><text x="754" y="650" class="nt">no key, or an unknown key</text><text x="754" y="680" class="ns">stopped at Authorino;</text><text x="754" y="704" class="ns">the application never saw it</text></g>
+<g id="o429" class="g"><rect x="1168" y="600" width="500" height="150" rx="18" class="node n-rose"/><text x="1198" y="660" class="big" fill="#fbbf24">429</text><text x="1308" y="650" class="nt">over today's plan</text><text x="1308" y="680" class="ns">stopped at Limitador;</text><text x="1308" y="704" class="ns">try again tomorrow, or a bigger plan</text></g>
+<g id="foot" class="g"><text x="60" y="860" class="band">THE APPLICATION ENFORCED NONE OF THIS</text><text x="60" y="900" class="s">Keys, plans, identity headers, logging and tracing are the gateway's; the service only knows the request that reached it.</text></g>
+<g id="dots"></g>
+</svg>
+</div><script>
+const $=id=>document.getElementById(id); const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+let T=0; const dotsG=$('dots');
+const fade=(id,t0,d=0.5)=>{$(id).style.opacity=clamp((T-t0)/d,0,1);};
+function dot(pathId,t0,t1,color,r=8){ if(T<t0||T>t1) return; const p=$(pathId); const L=p.getTotalLength(); const q=p.getPointAtLength(L*(T-t0)/(t1-t0)); const c=document.createElementNS('http://www.w3.org/2000/svg','circle'); c.setAttribute('cx',q.x); c.setAttribute('cy',q.y); c.setAttribute('r',r); c.setAttribute('fill',color); c.setAttribute('filter','url(#glow)'); dotsG.appendChild(c); }
+function glow(id,on){ $(id).style.filter = on ? 'url(#glow)' : 'none'; }
+// beats: narration ~22 s
+const B={client:0.5, zone:1.6, gw:2.0, auth:4.0, limit:7.0, app:10.0, o200:13.0, o401:15.2, o429:17.6, foot:20.0};
+const SCALE=Number(new URLSearchParams(location.search).get('scale')||1);
+window.seek=function(t){ T=t/SCALE; dotsG.innerHTML='';
+  for(const k in B) fade(k,B[k]);
+  // the happy request walks the chain
+  dot('p1',B.gw-0.6,B.gw+0.4,'#fbbf24'); glow('gw', T>B.gw+0.2 && T<B.auth);
+  dot('p2',B.auth-0.5,B.auth+0.3,'#fbbf24'); glow('auth', T>B.auth && T<B.limit);
+  dot('p3',B.limit-0.5,B.limit+0.3,'#fbbf24'); glow('limit', T>B.limit && T<B.app);
+  dot('p4',B.app-0.6,B.app+0.3,'#fbbf24'); glow('app', T>B.app && T<B.o200);
+  dot('pback',B.o200-1.0,B.o200+0.6,'#34d399');
+  // 401: a dot that dies at Authorino; 429: one that dies at Limitador
+  dot('p1',B.o401,B.o401+0.8,'#fb7185'); dot('p2',B.o401+0.8,B.o401+1.3,'#fb7185'); glow('auth', T>B.o401+1.3 && T<B.o401+2.2);
+  dot('p1',B.o429,B.o429+0.7,'#fbbf24'); dot('p2',B.o429+0.7,B.o429+1.1,'#fbbf24'); dot('p3',B.o429+1.1,B.o429+1.6,'#fbbf24'); glow('limit', T>B.o429+1.6 && T<B.o429+2.5);
+};
+seek(0);
+</script>
+<div id="pbar"></div>
+<div id="pctl"><button id="pp" title="space">Pause</button><button id="rs" title="R">Restart</button></div>
+<script>
+(function(){
+  // fit the fixed 1728x1117 stage to the window
+  const stage=document.getElementById('stage');
+  function fit(){ const s=Math.min(innerWidth/1728, innerHeight/1117); stage.style.transform='translate(-50%,-50%) scale('+s+')'; }
+  addEventListener('resize',fit); fit();
+  const D=22.5, HOLD=5.0, SPEED=0.8, TOTAL=D+HOLD;
+  const hash=new URLSearchParams(location.hash.replace(/^#/,''));
+  if(hash.has('t')){ window.seek(Number(hash.get('t'))); document.getElementById('pctl').style.display='none'; return; }
+  if(navigator.webdriver){ return; }   // frame capture drives seek() itself
+  let t=0, last=performance.now(), playing=true;
+  const bar=document.getElementById('pbar'), pp=document.getElementById('pp');
+  function frame(now){ const dt=(now-last)/1000; last=now; if(playing){ t+=dt*SPEED; if(t>TOTAL) t=0; }
+    window.seek(Math.min(t,D)); bar.style.width=(100*Math.min(t,D)/D)+'%'; requestAnimationFrame(frame); }
+  function toggle(){ playing=!playing; pp.textContent=playing?'Pause':'Play'; }
+  pp.onclick=toggle; document.getElementById('rs').onclick=()=>{ t=0; if(!playing) toggle(); };
+  addEventListener('keydown',e=>{ if(e.key===' '){ e.preventDefault(); toggle(); } else if(e.key==='r'||e.key==='R'){ t=0; } else if(e.key==='ArrowRight'){ t=Math.min(D,t+1); } else if(e.key==='ArrowLeft'){ t=Math.max(0,t-1); } });
+  requestAnimationFrame(frame);
+})();
+</script>
+</body></html>
