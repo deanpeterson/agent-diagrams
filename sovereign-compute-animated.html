@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Module 4: compute to the data — animated</title>
+<style>
+:root{--bg:#0a0f1e;--ink:#e8eefc;--muted:#9fb0d0;--cyan:#22d3ee;--blue:#60a5fa;--gold:#fbbf24;--green:#34d399;--violet:#a78bfa;--rose:#fb7185;--line:#27344e}
+*{box-sizing:border-box} html,body{margin:0;height:100%;overflow:hidden;background:var(--bg)}
+body{background:radial-gradient(1400px 800px at 50% -8%,#14213f 0%,var(--bg) 60%) fixed;color:var(--ink);
+  font:16px/1.4 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Inter,Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+#stage{position:fixed;left:50%;top:50%;width:1920px;height:1080px;transform-origin:center center;
+  display:flex;align-items:center;justify-content:center;padding:36px 60px}
+.wrap{width:1800px}
+h1{font-size:40px;font-weight:700;margin:0 0 6px;letter-spacing:-.01em} h1 .a{color:var(--gold)}
+.sub{color:var(--muted);font-size:22px;margin:0 0 16px}
+.card{background:linear-gradient(180deg,rgba(20,33,63,.65),rgba(10,15,30,.65));border:1px solid var(--line);border-radius:22px;
+  padding:10px 12px 4px;box-shadow:0 30px 80px -40px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.03)}
+svg{width:100%;height:auto;display:block}
+.legend{display:flex;gap:26px;flex-wrap:wrap;align-items:center;margin:14px 6px 2px;color:var(--muted);font-size:19px}
+.legend b{color:var(--ink);font-weight:600} .chip{display:inline-flex;align-items:center;gap:8px}
+.sw{width:14px;height:14px;border-radius:50%;box-shadow:0 0 10px currentColor}
+.key{margin-top:10px;color:var(--muted);font-size:21px} .key b{color:var(--ink);font-weight:700}
+text{font-family:inherit;fill:var(--ink)}
+.nt{font-weight:700;font-size:14.5px} .ns{font-size:11px;fill:var(--muted)} .wl{font-size:11px;font-weight:600}
+.lane{font-size:11.5px;font-weight:700;letter-spacing:.6px}
+.zone{fill:rgba(96,165,250,.04);stroke:rgba(96,165,250,.4);stroke-dasharray:5 6}
+.node{stroke-width:1.5}
+.n-bl{fill:#101a33;stroke:rgba(96,165,250,.6)} .n-gd{fill:#1b1c2e;stroke:rgba(251,191,36,.6)} .n-gr{fill:#0e2419;stroke:rgba(52,211,153,.55)}
+.n-vi{fill:#141d36;stroke:rgba(167,139,250,.55)} .n-rs{fill:#2a1420;stroke:rgba(251,113,133,.6)} .n-cy{fill:#0d2230;stroke:rgba(34,211,238,.55)}
+.n-gy{fill:#161b26;stroke:rgba(159,176,208,.4)}
+.c-bl{fill:rgba(96,165,250,.10);stroke:rgba(96,165,250,.38)} .c-gd{fill:rgba(251,191,36,.12);stroke:rgba(251,191,36,.45)}
+.c-gr{fill:rgba(52,211,153,.12);stroke:rgba(52,211,153,.4)} .c-vi{fill:rgba(167,139,250,.14);stroke:rgba(167,139,250,.4)}
+.c-rs{fill:rgba(251,113,133,.14);stroke:rgba(251,113,133,.45)} .c-cy{fill:rgba(34,211,238,.12);stroke:rgba(34,211,238,.4)}
+.c-gy{fill:rgba(159,176,208,.08);stroke:rgba(159,176,208,.3)}
+.ct{font-size:10.5px;fill:#dfe7fb} .ct-gd{fill:#f6d488} .ct-gr{fill:#9fe6c8} .ct-rs{fill:#fda4b4} .ct-vi{fill:#c9b8fb} .ct-bl{fill:#bcd3fb} .ct-cy{fill:#a5f3fc} .ct-gy{fill:#9fb0d0}
+.wire{fill:none;stroke-width:2}
+.w-bl{stroke:rgba(96,165,250,.42)} .w-gd{stroke:rgba(251,191,36,.42)} .w-gr{stroke:rgba(52,211,153,.4);stroke-dasharray:3 6}
+.w-vi{stroke:rgba(167,139,250,.42)} .w-rs{stroke:rgba(251,113,133,.45)} .w-gy{stroke:rgba(159,176,208,.3)}
+/* timed reveal: data-t = seconds after the page opens */
+.r{opacity:0;animation:in .7s ease-out forwards}
+@keyframes in{to{opacity:1}}
+.draw{stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1.1s ease-out forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.r.draw{animation:in .7s ease-out forwards,draw 1.1s ease-out forwards}
+.out{animation:out .5s ease-out forwards} @keyframes out{to{opacity:0}}
+.dim{animation:dim .9s ease-out forwards} @keyframes dim{to{opacity:.28}}
+.pulse{animation:pulse 1.6s ease-in-out infinite} @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+</style>
+<style>.fence{stroke:rgba(251,191,36,.55)}</style>
+</head>
+<body>
+<div id="stage"><div class="wrap">
+  <h1>Module 4 — <span class="a">compute to the data</span></h1>
+  <p class="sub">The usual way sends the records out to a model API. This module brings the workbench to the records, inside the same fence as everything else.</p>
+
+  <div class="card">
+  <svg viewBox="0 0 1340 560" role="img" aria-label="Animated diagram: data sent out to a third-party model API versus an OpenShift AI workbench started next to the records inside the hub's identity, policy and audit fence">
+    <defs>
+      <filter id="glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+
+    <!-- wires -->
+    <path id="DO" class="wire w-gy draw r" data-t="3.5" pathLength="1" d="M 280,170 L 400,170"/>
+    <path id="AW" class="wire w-vi draw r" data-t="23.0" pathLength="1" d="M 1160,230 L 1160,300"/>
+    <path id="WR" class="wire w-vi draw r" data-t="23.5" pathLength="1" d="M 1040,355 L 1000,355"/>
+
+    <!-- the usual way -->
+    <g class="dim" data-t="12.5">
+      <text class="lane r" data-t="2.7" x="40" y="44" style="fill:#9fb0d0">THE USUAL WAY · DATA OUT</text>
+      <g class="r" data-t="2.7">
+        <g filter="url(#soft)"><rect class="node n-gy" x="40" y="120" width="240" height="100" rx="13"/></g>
+        <text class="nt" x="60" y="148">Your data</text>
+        <text class="ns" x="60" y="166">the records</text>
+      </g>
+      <g class="r" data-t="2.7">
+        <g filter="url(#soft)"><rect class="node n-gy" x="400" y="120" width="260" height="100" rx="13"/></g>
+        <text class="nt" x="420" y="148">Someone else's model API</text>
+        <text class="ns" x="420" y="166">outside your boundary</text>
+        <text class="ns" x="420" y="184">their logs, their retention</text>
+      </g>
+      <text class="ns r" data-t="9.5" x="340" y="250" text-anchor="middle" style="fill:#fda4b4">gone the moment it leaves</text>
+      <g fill="#9fb0d0" filter="url(#glow)">
+        <circle r="5" class="r" data-t="4.5"><animateMotion dur="1.6s" data-b="4.5" data-e="13.0" repeatCount="indefinite"><mpath href="#DO"/></animateMotion></circle>
+        <circle r="5" class="r" data-t="5.3"><animateMotion dur="1.6s" data-b="5.3" data-e="13.0" repeatCount="indefinite"><mpath href="#DO"/></animateMotion></circle>
+      </g>
+    </g>
+    <text class="nt r" data-t="12.5" x="40" y="300" style="fill:#fda4b4;font-size:13px">not this way</text>
+    <text class="ns r" data-t="13.0" x="40" y="320">this module turns it around</text>
+
+    <!-- your hub, the fence -->
+    <g class="r" data-t="14.4">
+      <text class="lane" x="740" y="50" style="fill:#f6d488">YOUR HUB · THE SAME FENCE AS EVERYTHING ELSE</text>
+      <rect class="zone fence" x="720" y="60" width="580" height="470" rx="18"/>
+    </g>
+    <g font-size="10.5">
+      <g class="r" data-t="19.5"><rect class="c-gd" x="740" y="76" width="110" height="26" rx="6"/><text class="ct ct-gd" x="795" y="93" text-anchor="middle">your identity</text></g>
+      <g class="r" data-t="20.1"><rect class="c-gd" x="862" y="76" width="110" height="26" rx="6"/><text class="ct ct-gd" x="917" y="93" text-anchor="middle">your policies</text></g>
+      <g class="r" data-t="20.7"><rect class="c-gd" x="984" y="76" width="110" height="26" rx="6"/><text class="ct ct-gd" x="1039" y="93" text-anchor="middle">your audit log</text></g>
+    </g>
+    <g class="r" data-t="14.4">
+      <g filter="url(#soft)"><rect class="node n-gd" x="760" y="300" width="240" height="110" rx="13"/></g>
+      <text class="nt" x="780" y="328">The records</text>
+      <text class="ns" x="780" y="346">they stay on the hub</text>
+    </g>
+    <g class="r" data-t="30.1"><rect class="c-gd" x="780" y="362" width="200" height="26" rx="6"/><text class="ct ct-gd" x="880" y="379" text-anchor="middle">never left the cluster</text></g>
+
+    <g class="r" data-t="22.3">
+      <g filter="url(#soft)"><rect class="node n-vi" x="1040" y="120" width="240" height="110" rx="13"/></g>
+      <text class="nt" x="1060" y="148">OpenShift AI</text>
+      <text class="ns" x="1060" y="166">AI Hub · Deployments · Workbenches</text>
+      <text class="ns" x="1060" y="184">on the same hub as the controls</text>
+    </g>
+    <g class="r" data-t="22.3">
+      <g filter="url(#soft)"><rect class="node n-vi" x="1040" y="300" width="240" height="110" rx="13"/></g>
+      <text class="nt" x="1060" y="328">Workbench</text>
+      <text class="ns" x="1060" y="346">Jupyter · Data Science · CPU · Python 3.12</text>
+    </g>
+    <g class="r" data-t="25.8"><rect class="c-vi" x="1060" y="362" width="200" height="26" rx="6"/><text class="ct ct-vi" x="1160" y="379" text-anchor="middle">the notebook · run all cells</text></g>
+    <text class="wl r" data-t="24.5" x="1020" y="288" text-anchor="middle" style="fill:#c9b8fb">compute next to the data</text>
+
+    <g class="r" data-t="30.1">
+      <g filter="url(#soft)"><rect class="node n-vi" x="1040" y="430" width="240" height="80" rx="12"/></g>
+      <text class="ns" x="1060" y="450">the plot</text>
+      <polyline class="draw r" data-t="30.5" pathLength="1" points="1060,496 1090,488 1120,490 1150,474 1180,478 1210,462 1240,468 1270,452" fill="none" stroke="var(--violet)" stroke-width="2.5" stroke-linejoin="round"/>
+    </g>
+
+    <text class="ns r" data-t="34.0" x="740" y="440">no model deployed here · GPUs are expensive</text>
+    <text class="ns r" data-t="36.8" x="740" y="458">the point is the control plane</text>
+    <text class="ns r" data-t="38.5" x="740" y="476">add GPUs later: the fence is already there</text>
+    <text class="nt r" data-t="40.7" x="740" y="522" style="fill:#f6d488;font-size:15px">The model stays a choice you keep open.</text>
+
+    <!-- dots -->
+    <g fill="var(--violet)" filter="url(#glow)">
+      <circle r="5" class="r" data-t="23.5"><animateMotion dur="1.4s" data-b="23.5" repeatCount="indefinite"><mpath href="#AW"/></animateMotion></circle>
+      <circle r="5.5" class="r" data-t="24.5"><animateMotion dur="2s" data-b="24.5" repeatCount="indefinite" keyPoints="0;1;0" keyTimes="0;0.5;1" calcMode="linear"><mpath href="#WR"/></animateMotion></circle>
+      <circle r="5.5" class="r" data-t="25.5"><animateMotion dur="2s" data-b="25.5" repeatCount="indefinite" keyPoints="0;1;0" keyTimes="0;0.5;1" calcMode="linear"><mpath href="#WR"/></animateMotion></circle>
+    </g>
+  </svg>
+  </div>
+
+  <div class="legend">
+    <span class="chip"><span class="sw" style="color:#9fb0d0"></span><b>the usual way</b> — records sent to a model API outside the boundary</span>
+    <span class="chip"><span class="sw" style="color:var(--gold)"></span><b>the fence</b> — the hub's identity, policy and audit around the records</span>
+    <span class="chip"><span class="sw" style="color:var(--violet)"></span><b>OpenShift AI</b> — the workbench comes to the data</span>
+  </div>
+  <p class="key r" data-t="40.7"><b>Compute comes to the data.</b> The records never leave the cluster; the fence from Modules 1 to 3 is already around them, and the model stays a choice you keep open.</p>
+</div></div>
+<script>
+// Fit the 1920x1080 stage to the window and start the timed reveal.
+// Elements carry data-t (seconds, relative to the narration) for CSS animations; SMIL animateMotion carries data-b.
+// The player starts the narration 1.5 s after the page opens; the screen leads the voice by ~0.8 s.
+(() => {
+  const T0 = 0.5;
+  addEventListener('keydown', e => { if (e.key === 'r' || e.key === 'R') location.reload(); });
+  const st = document.getElementById('stage');
+  const fit = () => { const s = Math.min(innerWidth / 1920, innerHeight / 1080); st.style.transform = `translate(-50%,-50%) scale(${s})`; };
+  addEventListener('resize', fit); fit();
+  document.querySelectorAll('[data-t]').forEach(el => { el.style.animationDelay = (parseFloat(el.dataset.t) + T0) + 's'; });
+  document.querySelectorAll('[data-b]').forEach(a => { a.setAttribute('begin', (parseFloat(a.dataset.b) + T0) + 's'); });
+  document.querySelectorAll('[data-e]').forEach(a => { a.setAttribute('end', (parseFloat(a.dataset.e) + T0) + 's'); });
+  // #t=N: jump the whole timeline to N seconds (for still-frame checks)
+  const m = location.hash.match(/t=([\d.]+)/);
+  if (m) {
+    const t = parseFloat(m[1]);
+    document.querySelectorAll('[data-t]').forEach(el => { el.style.animationDelay = (parseFloat(el.dataset.t) + T0 - t) + 's'; });
+    document.querySelectorAll('[data-b]').forEach(a => { a.setAttribute('begin', (parseFloat(a.dataset.b) + T0 - t) + 's'); });
+    document.querySelectorAll('[data-e]').forEach(a => { a.setAttribute('end', (parseFloat(a.dataset.e) + T0 - t) + 's'); });
+    document.querySelectorAll('svg').forEach(s => { s.pauseAnimations(); s.setCurrentTime(0); s.unpauseAnimations(); });
+  }
+})();
+</script>
+</body>
+</html>

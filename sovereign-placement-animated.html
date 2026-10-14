@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Module 1: a label decides — animated</title>
+<style>
+:root{--bg:#0a0f1e;--ink:#e8eefc;--muted:#9fb0d0;--cyan:#22d3ee;--blue:#60a5fa;--gold:#fbbf24;--green:#34d399;--violet:#a78bfa;--rose:#fb7185;--line:#27344e}
+*{box-sizing:border-box} html,body{margin:0;height:100%;overflow:hidden;background:var(--bg)}
+body{background:radial-gradient(1400px 800px at 50% -8%,#14213f 0%,var(--bg) 60%) fixed;color:var(--ink);
+  font:16px/1.4 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Inter,Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+#stage{position:fixed;left:50%;top:50%;width:1920px;height:1080px;transform-origin:center center;
+  display:flex;align-items:center;justify-content:center;padding:36px 60px}
+.wrap{width:1800px}
+h1{font-size:40px;font-weight:700;margin:0 0 6px;letter-spacing:-.01em} h1 .a{color:var(--gold)}
+.sub{color:var(--muted);font-size:22px;margin:0 0 16px}
+.card{background:linear-gradient(180deg,rgba(20,33,63,.65),rgba(10,15,30,.65));border:1px solid var(--line);border-radius:22px;
+  padding:10px 12px 4px;box-shadow:0 30px 80px -40px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.03)}
+svg{width:100%;height:auto;display:block}
+.legend{display:flex;gap:26px;flex-wrap:wrap;align-items:center;margin:14px 6px 2px;color:var(--muted);font-size:19px}
+.legend b{color:var(--ink);font-weight:600} .chip{display:inline-flex;align-items:center;gap:8px}
+.sw{width:14px;height:14px;border-radius:50%;box-shadow:0 0 10px currentColor}
+.key{margin-top:10px;color:var(--muted);font-size:21px} .key b{color:var(--ink);font-weight:700}
+text{font-family:inherit;fill:var(--ink)}
+.nt{font-weight:700;font-size:14.5px} .ns{font-size:11px;fill:var(--muted)} .wl{font-size:11px;font-weight:600}
+.lane{font-size:11.5px;font-weight:700;letter-spacing:.6px}
+.zone{fill:rgba(96,165,250,.04);stroke:rgba(96,165,250,.4);stroke-dasharray:5 6}
+.node{stroke-width:1.5}
+.n-bl{fill:#101a33;stroke:rgba(96,165,250,.6)} .n-gd{fill:#1b1c2e;stroke:rgba(251,191,36,.6)} .n-gr{fill:#0e2419;stroke:rgba(52,211,153,.55)}
+.n-vi{fill:#141d36;stroke:rgba(167,139,250,.55)} .n-rs{fill:#2a1420;stroke:rgba(251,113,133,.6)} .n-cy{fill:#0d2230;stroke:rgba(34,211,238,.55)}
+.n-gy{fill:#161b26;stroke:rgba(159,176,208,.4)}
+.c-bl{fill:rgba(96,165,250,.10);stroke:rgba(96,165,250,.38)} .c-gd{fill:rgba(251,191,36,.12);stroke:rgba(251,191,36,.45)}
+.c-gr{fill:rgba(52,211,153,.12);stroke:rgba(52,211,153,.4)} .c-vi{fill:rgba(167,139,250,.14);stroke:rgba(167,139,250,.4)}
+.c-rs{fill:rgba(251,113,133,.14);stroke:rgba(251,113,133,.45)} .c-cy{fill:rgba(34,211,238,.12);stroke:rgba(34,211,238,.4)}
+.c-gy{fill:rgba(159,176,208,.08);stroke:rgba(159,176,208,.3)}
+.ct{font-size:10.5px;fill:#dfe7fb} .ct-gd{fill:#f6d488} .ct-gr{fill:#9fe6c8} .ct-rs{fill:#fda4b4} .ct-vi{fill:#c9b8fb} .ct-bl{fill:#bcd3fb} .ct-cy{fill:#a5f3fc} .ct-gy{fill:#9fb0d0}
+.wire{fill:none;stroke-width:2}
+.w-bl{stroke:rgba(96,165,250,.42)} .w-gd{stroke:rgba(251,191,36,.42)} .w-gr{stroke:rgba(52,211,153,.4);stroke-dasharray:3 6}
+.w-vi{stroke:rgba(167,139,250,.42)} .w-rs{stroke:rgba(251,113,133,.45)} .w-gy{stroke:rgba(159,176,208,.3)}
+/* timed reveal: data-t = seconds after the page opens */
+.r{opacity:0;animation:in .7s ease-out forwards}
+@keyframes in{to{opacity:1}}
+.draw{stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1.1s ease-out forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.r.draw{animation:in .7s ease-out forwards,draw 1.1s ease-out forwards}
+.out{animation:out .5s ease-out forwards} @keyframes out{to{opacity:0}}
+.dim{animation:dim .9s ease-out forwards} @keyframes dim{to{opacity:.28}}
+.pulse{animation:pulse 1.6s ease-in-out infinite} @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+</style>
+</head>
+<body>
+<div id="stage"><div class="wrap">
+  <h1>Module 1 — <span class="a">a label decides where workloads and policies land</span></h1>
+  <p class="sub">Git holds the definitions. The hub reads them. The application goes to three clusters; the GDPR policy goes to the one labelled location=emea.</p>
+
+  <div class="card">
+  <svg viewBox="0 0 1340 560" role="img" aria-label="Animated diagram: definitions in Git, read by the hub, placed onto three clusters by label; the GDPR policy lands only on the EMEA hosted control plane">
+    <defs>
+      <filter id="glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+
+    <!-- wires -->
+    <path id="GH" class="wire w-gd draw r" data-t="12.5" pathLength="1" d="M 310,280 L 410,280"/>
+    <path id="H1" class="wire w-bl draw r" data-t="27.4" pathLength="1" d="M 710,230 C 770,230 770,110 830,110"/>
+    <path id="H2" class="wire w-bl draw r" data-t="27.4" pathLength="1" d="M 710,280 C 770,280 770,255 830,255"/>
+    <path id="H3" class="wire w-bl draw r" data-t="27.4" pathLength="1" d="M 710,330 C 770,330 770,395 830,395"/>
+
+    <!-- git -->
+    <g class="r" data-t="2.7">
+      <text class="lane" x="40" y="138" style="fill:#f6d488">GIT · WHERE IT STARTS</text>
+      <g filter="url(#soft)"><rect class="node n-gd" x="40" y="150" width="270" height="260" rx="14"/></g>
+      <text class="nt" x="60" y="178">Git</text>
+      <text class="ns" x="95" y="178">the repository the hub reads</text>
+    </g>
+    <g font-size="10.5">
+      <g class="r" data-t="4.2"><rect class="c-bl" x="60" y="200" width="230" height="44" rx="7"/><text class="ct ct-bl" x="72" y="218">ApplicationSet · patient-portal</text><text class="ns" x="72" y="234">placement: all three clusters</text></g>
+      <g class="r" data-t="6.5"><rect class="c-rs" x="60" y="256" width="230" height="44" rx="7"/><text class="ct ct-rs" x="72" y="274">Policy · GDPR namespace compliance</text><text class="ns" x="72" y="290">placement: location=emea</text></g>
+      <g class="r" data-t="9.0"><rect class="c-gd" x="60" y="312" width="230" height="44" rx="7"/><text class="ct ct-gd" x="72" y="330">Placement + PlacementBinding</text><text class="ns" x="72" y="346">the rule that decides, by label</text></g>
+    </g>
+    <text class="ns r" data-t="10.5" x="60" y="392">three files; nothing typed into a cloud console</text>
+
+    <!-- the hub -->
+    <g class="r" data-t="12.5">
+      <text class="lane" x="410" y="138" style="fill:#8fb3f6">THE HUB · RUNS ON LOCAL-CLUSTER</text>
+      <g filter="url(#soft)"><rect class="node n-bl" x="410" y="150" width="300" height="260" rx="14"/></g>
+      <text class="nt" x="430" y="178">The hub reads Git</text>
+    </g>
+    <g font-size="10.5">
+      <g class="r" data-t="14.0"><rect class="c-bl" x="430" y="196" width="260" height="32" rx="7"/><text class="ct ct-bl" x="560" y="216" text-anchor="middle">Advanced Cluster Management</text></g>
+      <g class="r" data-t="14.6"><rect class="c-bl" x="430" y="238" width="260" height="32" rx="7"/><text class="ct ct-bl" x="560" y="258" text-anchor="middle">OpenShift GitOps</text></g>
+      <g class="r" data-t="16.4"><rect class="c-vi" x="430" y="280" width="260" height="32" rx="7"/><text class="ct ct-vi" x="560" y="300" text-anchor="middle">OpenShift Virtualization</text></g>
+      <g class="dim" data-t="23.0"><g class="r pulse" data-t="17.5"><rect class="c-gd" x="430" y="322" width="260" height="32" rx="7"/><text class="ct ct-gd" x="560" y="342" text-anchor="middle">creating hcp-emea control plane · 5–10 min</text></g></g>
+      <g class="r" data-t="27.4"><rect class="c-gd" x="430" y="364" width="260" height="32" rx="7"/><text class="ct ct-gd" x="560" y="384" text-anchor="middle">placement by label</text></g>
+    </g>
+
+    <!-- the clusters -->
+    <text class="lane r" data-t="12.5" x="830" y="48" style="fill:#8fb3f6">THE FLEET · WHERE THINGS LAND</text>
+    <g class="r" data-t="12.5">
+      <g filter="url(#soft)"><rect class="node n-bl" x="830" y="60" width="470" height="100" rx="13"/></g>
+      <text class="nt" x="850" y="86">local-cluster</text><text class="ns" x="950" y="86">the on-premises hub</text>
+      <rect class="c-bl" x="850" y="100" width="170" height="26" rx="6"/><text class="ct ct-bl" x="935" y="117" text-anchor="middle">label name=local-cluster</text>
+    </g>
+    <g class="r" data-t="30.0"><rect class="c-bl" x="1030" y="100" width="150" height="26" rx="6"/><text class="ct ct-bl" x="1105" y="117" text-anchor="middle">patient-portal ✓</text></g>
+
+    <g class="r" data-t="12.5">
+      <g filter="url(#soft)"><rect class="node n-bl" x="830" y="200" width="470" height="110" rx="13"/></g>
+      <text class="nt" x="850" y="226">aws-us</text><text class="ns" x="910" y="226">managed OpenShift in AWS, US</text>
+      <rect class="c-bl" x="850" y="240" width="140" height="26" rx="6"/><text class="ct ct-bl" x="920" y="257" text-anchor="middle">label name=aws-us</text>
+    </g>
+    <g class="r" data-t="31.0"><rect class="c-bl" x="1000" y="240" width="150" height="26" rx="6"/><text class="ct ct-bl" x="1075" y="257" text-anchor="middle">patient-portal ✓</text></g>
+    <text class="ns r" data-t="33.3" x="850" y="292">no GDPR policy here: the label does not match</text>
+
+    <g class="r" data-t="12.5">
+      <rect class="zone" x="830" y="340" width="470" height="110" rx="13"/>
+      <text class="nt" x="850" y="366" style="fill:#9fb0d0">hcp-emea</text><text class="ns" x="935" y="366">does not exist yet</text>
+    </g>
+    <g class="r" data-t="22.6">
+      <g filter="url(#soft)"><rect class="node n-gd" x="830" y="340" width="470" height="110" rx="13" style="fill:#1b1c2e"/></g>
+      <text class="nt" x="850" y="366">hcp-emea</text><text class="ns" x="935" y="366">hosted control plane on OpenShift Virtualization</text>
+      <rect class="c-gd" x="850" y="380" width="150" height="26" rx="6"/><text class="ct ct-gd" x="925" y="397" text-anchor="middle">label location=emea</text>
+    </g>
+    <g class="r" data-t="32.0"><rect class="c-bl" x="1010" y="380" width="150" height="26" rx="6"/><text class="ct ct-bl" x="1085" y="397" text-anchor="middle">patient-portal ✓</text></g>
+    <g class="r" data-t="36.5"><g class="out" data-t="42.3">
+      <rect class="c-rs" x="850" y="414" width="250" height="26" rx="6"/><text class="ct ct-rs" x="975" y="431" text-anchor="middle">GDPR policy · inform: violation</text>
+    </g></g>
+    <g class="r" data-t="42.5">
+      <rect class="c-gr" x="850" y="414" width="250" height="26" rx="6"/><text class="ct ct-gr" x="975" y="431" text-anchor="middle">GDPR policy · enforce: compliant</text>
+    </g>
+    <text class="ns r" data-t="43.5" x="1110" y="431" style="fill:#9fe6c8">green on this cluster alone</text>
+
+    <g class="r" data-t="28.9">
+      <text class="wl" x="770" y="178" text-anchor="middle" style="fill:#bcd3fb">application</text>
+      <text class="ns" x="770" y="192" text-anchor="middle">to all three</text>
+    </g>
+    <g class="r" data-t="34.0">
+      <text class="wl" x="770" y="420" text-anchor="middle" style="fill:#fda4b4">GDPR policy</text>
+      <text class="ns" x="770" y="434" text-anchor="middle">location=emea only</text>
+    </g>
+
+    <text class="ns r" data-t="48.9" x="40" y="500">nothing was typed into a cloud console</text>
+    <text class="nt r" data-t="51.7" x="40" y="536" style="fill:#f6d488;font-size:16px">A label in Git decided.</text>
+
+    <!-- dots -->
+    <g fill="var(--gold)" filter="url(#glow)">
+      <circle r="5.5" class="r" data-t="13.5"><animateMotion dur="1.6s" data-b="13.5" repeatCount="indefinite"><mpath href="#GH"/></animateMotion></circle>
+      <circle r="5.5" class="r" data-t="14.3"><animateMotion dur="1.6s" data-b="14.3" repeatCount="indefinite"><mpath href="#GH"/></animateMotion></circle>
+    </g>
+    <g fill="var(--blue)" filter="url(#glow)">
+      <circle r="5.5" class="r" data-t="28.9"><animateMotion dur="1.8s" data-b="28.9" repeatCount="indefinite"><mpath href="#H1"/></animateMotion></circle>
+      <circle r="5.5" class="r" data-t="29.4"><animateMotion dur="1.8s" data-b="29.4" repeatCount="indefinite"><mpath href="#H2"/></animateMotion></circle>
+      <circle r="5.5" class="r" data-t="29.9"><animateMotion dur="1.8s" data-b="29.9" repeatCount="indefinite"><mpath href="#H3"/></animateMotion></circle>
+    </g>
+    <g fill="var(--rose)" filter="url(#glow)">
+      <circle r="5.5" class="r" data-t="34.0"><animateMotion dur="1.8s" data-b="34.0" repeatCount="indefinite"><mpath href="#H3"/></animateMotion></circle>
+      <circle r="5.5" class="r" data-t="34.9"><animateMotion dur="1.8s" data-b="34.9" repeatCount="indefinite"><mpath href="#H3"/></animateMotion></circle>
+    </g>
+  </svg>
+  </div>
+
+  <div class="legend">
+    <span class="chip"><span class="sw" style="color:var(--gold)"></span><b>definitions</b> — files in Git, read by the hub</span>
+    <span class="chip"><span class="sw" style="color:var(--blue)"></span><b>application</b> — placed on all three clusters</span>
+    <span class="chip"><span class="sw" style="color:var(--rose)"></span><b>GDPR policy</b> — placed only where location=emea</span>
+  </div>
+  <p class="key r" data-t="51.7"><b>A label in Git decided.</b> Workloads and policies go where the labels say; add a tenth EMEA cluster tomorrow and it inherits the policy on registration.</p>
+</div></div>
+<script>
+// Fit the 1920x1080 stage to the window and start the timed reveal.
+// Elements carry data-t (seconds, relative to the narration) for CSS animations; SMIL animateMotion carries data-b.
+// The player starts the narration 1.5 s after the page opens; the screen leads the voice by ~0.8 s.
+(() => {
+  const T0 = 0.5;
+  addEventListener('keydown', e => { if (e.key === 'r' || e.key === 'R') location.reload(); });
+  const st = document.getElementById('stage');
+  const fit = () => { const s = Math.min(innerWidth / 1920, innerHeight / 1080); st.style.transform = `translate(-50%,-50%) scale(${s})`; };
+  addEventListener('resize', fit); fit();
+  document.querySelectorAll('[data-t]').forEach(el => { el.style.animationDelay = (parseFloat(el.dataset.t) + T0) + 's'; });
+  document.querySelectorAll('[data-b]').forEach(a => { a.setAttribute('begin', (parseFloat(a.dataset.b) + T0) + 's'); });
+  document.querySelectorAll('[data-e]').forEach(a => { a.setAttribute('end', (parseFloat(a.dataset.e) + T0) + 's'); });
+  // #t=N: jump the whole timeline to N seconds (for still-frame checks)
+  const m = location.hash.match(/t=([\d.]+)/);
+  if (m) {
+    const t = parseFloat(m[1]);
+    document.querySelectorAll('[data-t]').forEach(el => { el.style.animationDelay = (parseFloat(el.dataset.t) + T0 - t) + 's'; });
+    document.querySelectorAll('[data-b]').forEach(a => { a.setAttribute('begin', (parseFloat(a.dataset.b) + T0 - t) + 's'); });
+    document.querySelectorAll('[data-e]').forEach(a => { a.setAttribute('end', (parseFloat(a.dataset.e) + T0 - t) + 's'); });
+    document.querySelectorAll('svg').forEach(s => { s.pauseAnimations(); s.setCurrentTime(0); s.unpauseAnimations(); });
+  }
+})();
+</script>
+</body>
+</html>

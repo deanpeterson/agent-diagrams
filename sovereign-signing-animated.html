@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Module 3: two trust roots, kept apart — animated</title>
+<style>
+:root{--bg:#0a0f1e;--ink:#e8eefc;--muted:#9fb0d0;--cyan:#22d3ee;--blue:#60a5fa;--gold:#fbbf24;--green:#34d399;--violet:#a78bfa;--rose:#fb7185;--line:#27344e}
+*{box-sizing:border-box} html,body{margin:0;height:100%;overflow:hidden;background:var(--bg)}
+body{background:radial-gradient(1400px 800px at 50% -8%,#14213f 0%,var(--bg) 60%) fixed;color:var(--ink);
+  font:16px/1.4 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Inter,Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+#stage{position:fixed;left:50%;top:50%;width:1920px;height:1080px;transform-origin:center center;
+  display:flex;align-items:center;justify-content:center;padding:36px 60px}
+.wrap{width:1800px}
+h1{font-size:40px;font-weight:700;margin:0 0 6px;letter-spacing:-.01em} h1 .a{color:var(--gold)}
+.sub{color:var(--muted);font-size:22px;margin:0 0 16px}
+.card{background:linear-gradient(180deg,rgba(20,33,63,.65),rgba(10,15,30,.65));border:1px solid var(--line);border-radius:22px;
+  padding:10px 12px 4px;box-shadow:0 30px 80px -40px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.03)}
+svg{width:100%;height:auto;display:block}
+.legend{display:flex;gap:26px;flex-wrap:wrap;align-items:center;margin:14px 6px 2px;color:var(--muted);font-size:19px}
+.legend b{color:var(--ink);font-weight:600} .chip{display:inline-flex;align-items:center;gap:8px}
+.sw{width:14px;height:14px;border-radius:50%;box-shadow:0 0 10px currentColor}
+.key{margin-top:10px;color:var(--muted);font-size:21px} .key b{color:var(--ink);font-weight:700}
+text{font-family:inherit;fill:var(--ink)}
+.nt{font-weight:700;font-size:14.5px} .ns{font-size:11px;fill:var(--muted)} .wl{font-size:11px;font-weight:600}
+.lane{font-size:11.5px;font-weight:700;letter-spacing:.6px}
+.zone{fill:rgba(96,165,250,.04);stroke:rgba(96,165,250,.4);stroke-dasharray:5 6}
+.node{stroke-width:1.5}
+.n-bl{fill:#101a33;stroke:rgba(96,165,250,.6)} .n-gd{fill:#1b1c2e;stroke:rgba(251,191,36,.6)} .n-gr{fill:#0e2419;stroke:rgba(52,211,153,.55)}
+.n-vi{fill:#141d36;stroke:rgba(167,139,250,.55)} .n-rs{fill:#2a1420;stroke:rgba(251,113,133,.6)} .n-cy{fill:#0d2230;stroke:rgba(34,211,238,.55)}
+.n-gy{fill:#161b26;stroke:rgba(159,176,208,.4)}
+.c-bl{fill:rgba(96,165,250,.10);stroke:rgba(96,165,250,.38)} .c-gd{fill:rgba(251,191,36,.12);stroke:rgba(251,191,36,.45)}
+.c-gr{fill:rgba(52,211,153,.12);stroke:rgba(52,211,153,.4)} .c-vi{fill:rgba(167,139,250,.14);stroke:rgba(167,139,250,.4)}
+.c-rs{fill:rgba(251,113,133,.14);stroke:rgba(251,113,133,.45)} .c-cy{fill:rgba(34,211,238,.12);stroke:rgba(34,211,238,.4)}
+.c-gy{fill:rgba(159,176,208,.08);stroke:rgba(159,176,208,.3)}
+.ct{font-size:10.5px;fill:#dfe7fb} .ct-gd{fill:#f6d488} .ct-gr{fill:#9fe6c8} .ct-rs{fill:#fda4b4} .ct-vi{fill:#c9b8fb} .ct-bl{fill:#bcd3fb} .ct-cy{fill:#a5f3fc} .ct-gy{fill:#9fb0d0}
+.wire{fill:none;stroke-width:2}
+.w-bl{stroke:rgba(96,165,250,.42)} .w-gd{stroke:rgba(251,191,36,.42)} .w-gr{stroke:rgba(52,211,153,.4);stroke-dasharray:3 6}
+.w-vi{stroke:rgba(167,139,250,.42)} .w-rs{stroke:rgba(251,113,133,.45)} .w-gy{stroke:rgba(159,176,208,.3)}
+/* timed reveal: data-t = seconds after the page opens */
+.r{opacity:0;animation:in .7s ease-out forwards}
+@keyframes in{to{opacity:1}}
+.draw{stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1.1s ease-out forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.r.draw{animation:in .7s ease-out forwards,draw 1.1s ease-out forwards}
+.out{animation:out .5s ease-out forwards} @keyframes out{to{opacity:0}}
+.dim{animation:dim .9s ease-out forwards} @keyframes dim{to{opacity:.28}}
+.pulse{animation:pulse 1.6s ease-in-out infinite} @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+</style>
+</head>
+<body>
+<div id="stage"><div class="wrap">
+  <h1>Module 3 — <span class="a">two trust roots, kept apart</span></h1>
+  <p class="sub">Red Hat's key proves the base image. Your identity signs the application. The transparency log runs on your hub.</p>
+
+  <div class="card">
+  <svg viewBox="0 0 1340 560" role="img" aria-label="Animated diagram: Hardened Images verified with Red Hat's key and mirrored into your Quay; the application built on them and signed through Keycloak, Fulcio, cosign and Rekor on the hub">
+    <defs>
+      <filter id="glow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <filter id="soft" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+
+    <!-- wires -->
+    <path id="HV" class="wire w-rs draw r" data-t="6.6" pathLength="1" d="M 340,105 L 400,105"/>
+    <path id="VQ" class="wire w-rs draw r" data-t="13.0" pathLength="1" d="M 700,105 L 1040,105"/>
+    <path id="DB" class="wire w-bl draw r" data-t="18.5" pathLength="1" d="M 340,225 L 400,225"/>
+    <path id="BQ" class="wire w-bl draw r" data-t="22.0" pathLength="1" d="M 700,225 L 1040,225"/>
+    <path id="KF" class="wire w-vi draw r" data-t="34.0" pathLength="1" d="M 250,410 L 300,410"/>
+    <path id="FC" class="wire w-gd draw r" data-t="37.0" pathLength="1" d="M 500,410 L 550,410"/>
+    <path id="CR" class="wire w-gd draw r" data-t="38.6" pathLength="1" d="M 750,410 L 800,410"/>
+    <path id="RQ" class="wire w-gd draw r" data-t="44.0" pathLength="1" d="M 1000,410 C 1100,410 1170,400 1170,330"/>
+
+    <!-- Red Hat's trust root -->
+    <text class="lane r" data-t="4.6" x="40" y="44" style="fill:#fda4b4">RED HAT'S TRUST ROOT · THE BASE IMAGE</text>
+    <g class="r" data-t="6.6">
+      <g filter="url(#soft)"><rect class="node n-rs" x="40" y="60" width="300" height="90" rx="13"/></g>
+      <text class="nt" x="60" y="88">Red Hat Hardened Images</text>
+      <text class="ns" x="60" y="106">Python 3.14 builder + runtime</text>
+      <text class="ns" x="60" y="124">signed by Red Hat, with an SBOM</text>
+    </g>
+    <g class="r" data-t="8.5">
+      <g filter="url(#soft)"><rect class="node n-gr" x="400" y="60" width="300" height="90" rx="13"/></g>
+      <text class="nt" x="420" y="88">cosign verify</text>
+      <text class="ns" x="420" y="106">against Red Hat's public key</text>
+    </g>
+    <g class="r" data-t="11.5"><rect class="c-gr" x="420" y="116" width="120" height="24" rx="6"/><text class="ct ct-gr" x="480" y="132" text-anchor="middle">✓ both verified</text></g>
+    <text class="ns r" data-t="13.5" x="870" y="92" text-anchor="middle" style="fill:#fda4b4">mirror into your registry</text>
+
+    <!-- the build -->
+    <text class="lane r" data-t="16.4" x="40" y="172" style="fill:#8fb3f6">THE BUILD</text>
+    <g class="r" data-t="16.4">
+      <g filter="url(#soft)"><rect class="node n-bl" x="40" y="180" width="300" height="90" rx="13"/></g>
+      <text class="nt" x="60" y="208">Dockerfile</text>
+      <text class="ns" x="60" y="226">two FROM lines, both from your Quay</text>
+      <text class="ns" x="60" y="244">builder stage · run stage</text>
+    </g>
+    <g class="r" data-t="19.0">
+      <g filter="url(#soft)"><rect class="node n-bl" x="400" y="180" width="300" height="90" rx="13"/></g>
+      <text class="nt" x="420" y="208">podman build · push</text>
+      <text class="ns" x="420" y="226">the patient portal, rebuilt on the base</text>
+      <text class="ns" x="420" y="244">cosign signs what is in the registry</text>
+    </g>
+    <text class="ns r" data-t="23.0" x="870" y="212" text-anchor="middle" style="fill:#bcd3fb">push the image</text>
+
+    <!-- your Quay -->
+    <g class="r" data-t="13.5">
+      <text class="lane" x="1040" y="44" style="fill:#f6d488">YOUR REGISTRY</text>
+      <g filter="url(#soft)"><rect class="node n-gd" x="1040" y="60" width="260" height="270" rx="14"/></g>
+      <text class="nt" x="1060" y="88">Your Quay</text>
+      <text class="ns" x="1150" y="88">on the hub</text>
+    </g>
+    <g font-size="10.5">
+      <g class="r" data-t="14.5"><rect class="c-rs" x="1060" y="104" width="220" height="34" rx="7"/><text class="ct ct-rs" x="1072" y="119">python-hi-314 · builder, runtime</text><text class="ns" x="1072" y="132">mirrored, Red Hat's signature verified</text></g>
+      <g class="r" data-t="23.5"><rect class="c-bl" x="1060" y="160" width="220" height="34" rx="7"/><text class="ct ct-bl" x="1072" y="175">patient-portal · the digest</text><text class="ns" x="1072" y="188">built on the mirrored base</text></g>
+      <g class="r" data-t="45.5"><rect class="c-gd" x="1060" y="216" width="220" height="34" rx="7"/><text class="ct ct-gd" x="1072" y="231">signature · next to the image</text><text class="ns" x="1072" y="244">cosign tree shows it; Quay shows it</text></g>
+    </g>
+    <text class="ns r" data-t="46.5" x="1060" y="300" style="fill:#f6d488">two signatures, two roots</text>
+
+    <!-- your trust root -->
+    <g class="r" data-t="27.0">
+      <rect class="zone" x="30" y="300" width="990" height="240" rx="16" style="stroke:rgba(251,191,36,.5)"/>
+      <text class="lane" x="48" y="328" style="fill:#f6d488">YOUR TRUST ROOT · TRUSTED ARTIFACT SIGNER, ALL OF IT ON THE HUB</text>
+    </g>
+    <g class="r" data-t="32.5">
+      <g filter="url(#soft)"><rect class="node n-vi" x="50" y="360" width="200" height="100" rx="13"/></g>
+      <text class="nt" x="70" y="388">Keycloak</text>
+      <text class="ns" x="70" y="406">who you are</text>
+      <text class="ns" x="70" y="424">OIDC sign-in from the terminal</text>
+    </g>
+    <g class="r" data-t="34.4">
+      <g filter="url(#soft)"><rect class="node n-gd" x="300" y="360" width="200" height="100" rx="13"/></g>
+      <text class="nt" x="320" y="388">Fulcio</text>
+      <text class="ns" x="320" y="406">identity → short-lived</text>
+      <text class="ns" x="320" y="424">signing certificate</text>
+    </g>
+    <g class="r" data-t="37.6">
+      <g filter="url(#soft)"><rect class="node n-gd" x="550" y="360" width="200" height="100" rx="13"/></g>
+      <text class="nt" x="570" y="388">cosign sign</text>
+      <text class="ns" x="570" y="406">the image digest,</text>
+      <text class="ns" x="570" y="424">not a local tag</text>
+    </g>
+    <g class="r" data-t="39.1">
+      <g filter="url(#soft)"><rect class="node n-gd" x="800" y="360" width="200" height="100" rx="13"/></g>
+      <text class="nt" x="820" y="388">Rekor</text>
+      <text class="ns" x="820" y="406">transparency log you run</text>
+    </g>
+    <g class="r" data-t="43.5"><rect class="c-gd" x="820" y="418" width="120" height="24" rx="6"/><text class="ct ct-gd" x="880" y="434" text-anchor="middle">tlog index: 1</text></g>
+    <text class="ns r" data-t="48.5" x="48" y="500">nothing in this chain touches a service someone else operates · not sigstore.dev, not a cloud key service</text>
+    <text class="nt r" data-t="52.5" x="48" y="528" style="fill:#f6d488;font-size:15px">Base proven with Red Hat's key. Application signed by you. Record in a log you own.</text>
+
+    <!-- dots -->
+    <g fill="var(--rose)" filter="url(#glow)">
+      <circle r="5" class="r" data-t="8.5"><animateMotion dur="2.2s" data-b="8.5" repeatCount="indefinite" keyPoints="0;1;0" keyTimes="0;0.5;1" calcMode="linear"><mpath href="#HV"/></animateMotion></circle>
+      <circle r="5" class="r" data-t="14.0"><animateMotion dur="2.4s" data-b="14.0" repeatCount="indefinite"><mpath href="#VQ"/></animateMotion></circle>
+      <circle r="5" class="r" data-t="15.2"><animateMotion dur="2.4s" data-b="15.2" repeatCount="indefinite"><mpath href="#VQ"/></animateMotion></circle>
+    </g>
+    <g fill="var(--blue)" filter="url(#glow)">
+      <circle r="5" class="r" data-t="19.5"><animateMotion dur="1.6s" data-b="19.5" repeatCount="indefinite"><mpath href="#DB"/></animateMotion></circle>
+      <circle r="5" class="r" data-t="23.0"><animateMotion dur="2.4s" data-b="23.0" repeatCount="indefinite"><mpath href="#BQ"/></animateMotion></circle>
+      <circle r="5" class="r" data-t="24.2"><animateMotion dur="2.4s" data-b="24.2" repeatCount="indefinite"><mpath href="#BQ"/></animateMotion></circle>
+    </g>
+    <g fill="var(--violet)" filter="url(#glow)">
+      <circle r="5" class="r" data-t="34.6"><animateMotion dur="1.6s" data-b="34.6" repeatCount="indefinite"><mpath href="#KF"/></animateMotion></circle>
+    </g>
+    <g fill="var(--gold)" filter="url(#glow)">
+      <circle r="5.5" class="r" data-t="37.8"><animateMotion dur="1.6s" data-b="37.8" repeatCount="indefinite"><mpath href="#FC"/></animateMotion></circle>
+      <circle r="5.5" class="r" data-t="39.4"><animateMotion dur="1.6s" data-b="39.4" repeatCount="indefinite"><mpath href="#CR"/></animateMotion></circle>
+      <circle r="5.5" class="r" data-t="45.0"><animateMotion dur="2.2s" data-b="45.0" repeatCount="indefinite"><mpath href="#RQ"/></animateMotion></circle>
+    </g>
+  </svg>
+  </div>
+
+  <div class="legend">
+    <span class="chip"><span class="sw" style="color:var(--rose)"></span><b>Red Hat's root</b> — the base image, verified with Red Hat's key</span>
+    <span class="chip"><span class="sw" style="color:var(--blue)"></span><b>the build</b> — your application on the mirrored base</span>
+    <span class="chip"><span class="sw" style="color:var(--gold)"></span><b>your root</b> — Keycloak, Fulcio, cosign, Rekor on the hub</span>
+  </div>
+  <p class="key r" data-t="52.5"><b>Two trust roots, kept apart.</b> The base is proven with Red Hat's key, the application carries your signature, and the record is in a log you own.</p>
+</div></div>
+<script>
+// Fit the 1920x1080 stage to the window and start the timed reveal.
+// Elements carry data-t (seconds, relative to the narration) for CSS animations; SMIL animateMotion carries data-b.
+// The player starts the narration 1.5 s after the page opens; the screen leads the voice by ~0.8 s.
+(() => {
+  const T0 = 0.5;
+  addEventListener('keydown', e => { if (e.key === 'r' || e.key === 'R') location.reload(); });
+  const st = document.getElementById('stage');
+  const fit = () => { const s = Math.min(innerWidth / 1920, innerHeight / 1080); st.style.transform = `translate(-50%,-50%) scale(${s})`; };
+  addEventListener('resize', fit); fit();
+  document.querySelectorAll('[data-t]').forEach(el => { el.style.animationDelay = (parseFloat(el.dataset.t) + T0) + 's'; });
+  document.querySelectorAll('[data-b]').forEach(a => { a.setAttribute('begin', (parseFloat(a.dataset.b) + T0) + 's'); });
+  document.querySelectorAll('[data-e]').forEach(a => { a.setAttribute('end', (parseFloat(a.dataset.e) + T0) + 's'); });
+  // #t=N: jump the whole timeline to N seconds (for still-frame checks)
+  const m = location.hash.match(/t=([\d.]+)/);
+  if (m) {
+    const t = parseFloat(m[1]);
+    document.querySelectorAll('[data-t]').forEach(el => { el.style.animationDelay = (parseFloat(el.dataset.t) + T0 - t) + 's'; });
+    document.querySelectorAll('[data-b]').forEach(a => { a.setAttribute('begin', (parseFloat(a.dataset.b) + T0 - t) + 's'); });
+    document.querySelectorAll('[data-e]').forEach(a => { a.setAttribute('end', (parseFloat(a.dataset.e) + T0 - t) + 's'); });
+    document.querySelectorAll('svg').forEach(s => { s.pauseAnimations(); s.setCurrentTime(0); s.unpauseAnimations(); });
+  }
+})();
+</script>
+</body>
+</html>
