@@ -60,23 +60,23 @@ text{font-family:inherit;fill:var(--ink)}
     </defs>
 
     <!-- wires -->
-    <path id="NA" class="wire w-gd draw r" data-t="14.0" pathLength="1" d="M 430,205 L 470,205"/>
-    <path id="NM" class="wire w-gd draw r" data-t="10.0" pathLength="1" d="M 430,120 C 560,120 560,110 660,110"/>
-    <path id="PM" class="wire w-bl draw r" data-t="40.0" pathLength="1" d="M 900,200 C 890,200 890,200 880,200"/>
-    <path id="AM" class="wire w-vi draw r" data-t="24.0" pathLength="1" d="M 630,205 C 650,205 650,270 660,270"/>
+    <path id="NA" class="wire w-gd draw r" data-t="17.3" pathLength="1" d="M 430,205 L 470,205"/>
+    <path id="NM" class="wire w-gd draw r" data-t="9.6" pathLength="1" d="M 430,120 C 560,120 560,110 660,110"/>
+    <path id="PM" class="wire w-bl draw r" data-t="33.6" pathLength="1" d="M 900,200 C 890,200 890,200 880,200"/>
+    <path id="AM" class="wire w-vi draw r" data-t="25.1" pathLength="1" d="M 630,205 C 650,205 650,270 660,270"/>
 
     <!-- inner loop -->
-    <g class="r" data-t="2.0">
+    <g class="r" data-t="4.0">
       <text class="lane" x="40" y="44" style="fill:#f6d488">INNER LOOP · A DEVELOPER IN A WORKBENCH (MODULE 5)</text>
       <rect class="zone" x="30" y="56" width="610" height="280" rx="14" style="stroke:rgba(251,191,36,.45)"/>
     </g>
-    <g class="r" data-t="3.0">
+    <g class="r" data-t="5.0">
       <g filter="url(#soft)"><rect class="node n-vi" x="50" y="80" width="180" height="76" rx="12"/></g>
       <text class="nt" x="68" y="106">Workbench</text>
       <text class="ns" x="68" y="124">Jupyter · Data Science</text>
       <text class="ns" x="68" y="142">CPU · Python 3.12</text>
     </g>
-    <g class="r" data-t="5.0">
+    <g class="r" data-t="6.0">
       <g filter="url(#soft)"><rect class="node n-gd" x="250" y="80" width="180" height="76" rx="12"/></g>
       <text class="nt" x="268" y="106">evaluate_agent.ipynb</text>
       <text class="ns" x="268" y="124">from the application repo</text>
@@ -84,51 +84,51 @@ text{font-family:inherit;fill:var(--ink)}
     </g>
     <g font-size="10.5">
       <g class="r" data-t="9.0"><rect class="c-gd" x="50" y="172" width="380" height="28" rx="7"/><text class="ct ct-gd" x="62" y="190">1  register the system prompt → Prompt Registry, version 1</text></g>
-      <g class="r" data-t="12.0"><rect class="c-gd" x="50" y="206" width="380" height="28" rx="7"/><text class="ct ct-gd" x="62" y="224">2  create the dataset: 6 cases, inputs + expectations</text></g>
-      <g class="r" data-t="15.0"><rect class="c-gd" x="50" y="240" width="380" height="28" rx="7"/><text class="ct ct-gd" x="62" y="258">3  the predictor calls the live prospect agent</text></g>
-      <g class="r" data-t="18.0"><rect class="c-gd" x="50" y="274" width="380" height="28" rx="7"/><text class="ct ct-gd" x="62" y="292">4  scorers: 3 deterministic + 5 LLM judges</text></g>
-      <g class="r" data-t="22.0"><rect class="c-gd" x="50" y="308" width="380" height="24" rx="7"/><text class="ct ct-gd" x="62" y="325">5  assessments on every trace, prompt-linked</text></g>
+      <g class="r" data-t="13.9"><rect class="c-gd" x="50" y="206" width="380" height="28" rx="7"/><text class="ct ct-gd" x="62" y="224">2  create the dataset: 6 cases, inputs + expectations</text></g>
+      <g class="r" data-t="19.7"><rect class="c-gd" x="50" y="240" width="380" height="28" rx="7"/><text class="ct ct-gd" x="62" y="258">3  the predictor calls the live prospect agent</text></g>
+      <g class="r" data-t="20.7"><rect class="c-gd" x="50" y="274" width="380" height="28" rx="7"/><text class="ct ct-gd" x="62" y="292">4  scorers: 3 deterministic + 5 LLM judges</text></g>
+      <g class="r" data-t="24.6"><rect class="c-gd" x="50" y="308" width="380" height="24" rx="7"/><text class="ct ct-gd" x="62" y="325">5  assessments on every trace, prompt-linked</text></g>
     </g>
-    <g class="r" data-t="15.0">
+    <g class="r" data-t="19.7">
       <g filter="url(#soft)"><rect class="node n-bl" x="470" y="172" width="160" height="66" rx="12"/></g>
       <text class="nt" x="488" y="198" style="font-size:13px">Prospect agent</text>
       <text class="ns" x="488" y="216">live, in your namespace</text>
     </g>
     <g font-size="10.5">
-      <g class="r" data-t="19.0"><rect class="c-gd" x="470" y="250" width="160" height="24" rx="6"/><text class="ct ct-gd" x="550" y="266" text-anchor="middle">3 deterministic scorers</text></g>
-      <g class="r" data-t="20.5"><rect class="c-gd" x="470" y="280" width="160" height="24" rx="6"/><text class="ct ct-gd" x="550" y="296" text-anchor="middle">5 LLM-as-a-judge scorers</text></g>
-      <g class="r" data-t="26.0"><rect class="c-gr" x="470" y="310" width="160" height="24" rx="6"/><text class="ct ct-gr" x="550" y="326" text-anchor="middle">tool calls 83 % · safety 100 %</text></g>
+      <g class="r" data-t="21.3"><rect class="c-gd" x="470" y="250" width="160" height="24" rx="6"/><text class="ct ct-gd" x="550" y="266" text-anchor="middle">3 deterministic scorers</text></g>
+      <g class="r" data-t="22.3"><rect class="c-gd" x="470" y="280" width="160" height="24" rx="6"/><text class="ct ct-gd" x="550" y="296" text-anchor="middle">5 LLM-as-a-judge scorers</text></g>
+      <g class="r" data-t="26.1"><rect class="c-gr" x="470" y="310" width="160" height="24" rx="6"/><text class="ct ct-gr" x="550" y="326" text-anchor="middle">tool calls 83 % · safety 100 %</text></g>
     </g>
 
     <!-- MLflow -->
-    <g class="r" data-t="7.0">
+    <g class="r" data-t="8.5">
       <text class="lane" x="670" y="44" style="fill:#c4b3fb">MLFLOW · THE SERVER</text>
       <g filter="url(#soft)"><rect class="node n-vi" x="660" y="56" width="220" height="280" rx="14"/></g>
     </g>
     <g font-size="10.5">
-      <g class="r" data-t="10.5"><rect class="c-vi" x="676" y="76" width="188" height="40" rx="7"/><text class="ct ct-vi" x="688" y="93">Prompt Registry</text><text class="ns" x="688" y="108">public-assistant-system-prompt v1</text></g>
-      <g class="r" data-t="13.0"><rect class="c-vi" x="676" y="124" width="188" height="40" rx="7"/><text class="ct ct-vi" x="688" y="141">Datasets</text><text class="ns" x="688" y="156">public_assistant_eval · 6 records</text></g>
-      <g class="r" data-t="24.0"><rect class="c-vi" x="676" y="172" width="188" height="40" rx="7"/><text class="ct ct-vi" x="688" y="189">Evaluation runs</text><text class="ns" x="688" y="204">simple · LLM-as-a-judge · pipeline</text></g>
-      <g class="r" data-t="25.0"><rect class="c-vi" x="676" y="220" width="188" height="40" rx="7"/><text class="ct ct-vi" x="688" y="237">Traces + assessments</text><text class="ns" x="688" y="252">pass / fail per scorer, per trace</text></g>
-      <g class="r" data-t="26.5"><rect class="c-vi" x="676" y="268" width="188" height="54" rx="7"/><text class="ct ct-vi" x="688" y="285">Experiments</text><text class="ns" x="688" y="300">mortgage-ai-eval (notebook)</text><text class="ns" x="688" y="314">multi-agent-loan-origination-eval</text></g>
+      <g class="r" data-t="10.0"><rect class="c-vi" x="676" y="76" width="188" height="40" rx="7"/><text class="ct ct-vi" x="688" y="93">Prompt Registry</text><text class="ns" x="688" y="108">public-assistant-system-prompt v1</text></g>
+      <g class="r" data-t="14.9"><rect class="c-vi" x="676" y="124" width="188" height="40" rx="7"/><text class="ct ct-vi" x="688" y="141">Datasets</text><text class="ns" x="688" y="156">public_assistant_eval · 6 records</text></g>
+      <g class="r" data-t="25.1"><rect class="c-vi" x="676" y="172" width="188" height="40" rx="7"/><text class="ct ct-vi" x="688" y="189">Evaluation runs</text><text class="ns" x="688" y="204">simple · LLM-as-a-judge · pipeline</text></g>
+      <g class="r" data-t="25.6"><rect class="c-vi" x="676" y="220" width="188" height="40" rx="7"/><text class="ct ct-vi" x="688" y="237">Traces + assessments</text><text class="ns" x="688" y="252">pass / fail per scorer, per trace</text></g>
+      <g class="r" data-t="26.6"><rect class="c-vi" x="676" y="268" width="188" height="54" rx="7"/><text class="ct ct-vi" x="688" y="285">Experiments</text><text class="ns" x="688" y="300">mortgage-ai-eval (notebook)</text><text class="ns" x="688" y="314">multi-agent-loan-origination-eval</text></g>
     </g>
 
     <!-- outer loop -->
-    <g class="r" data-t="30.0">
+    <g class="r" data-t="27.1">
       <text class="lane" x="910" y="44" style="fill:#8fb3f6">OUTER LOOP · A PIPELINE ON THE PLATFORM (MODULE 6)</text>
       <rect class="zone" x="900" y="56" width="410" height="280" rx="14"/>
     </g>
-    <g class="r" data-t="31.0">
+    <g class="r" data-t="27.6">
       <text class="nt" x="920" y="84" style="font-size:13px">AI Pipelines · eval-simple-run</text>
       <text class="ns" x="920" y="102">imported by URL from the application repo</text>
     </g>
     <g font-size="10.5">
-      <g class="r" data-t="33.0"><rect class="c-bl" x="920" y="114" width="180" height="30" rx="7"/><text class="ct ct-bl" x="1010" y="133" text-anchor="middle">setup-mlflow-op</text></g>
-      <g class="r" data-t="35.0"><rect class="c-bl" x="920" y="150" width="180" height="30" rx="7"/><text class="ct ct-bl" x="1010" y="169" text-anchor="middle">create-dataset-op</text></g>
-      <g class="r" data-t="37.0"><rect class="c-bl" x="920" y="186" width="180" height="30" rx="7"/><text class="ct ct-bl" x="1010" y="205" text-anchor="middle">run-simple-eval-op</text></g>
-      <g class="r" data-t="39.0"><rect class="c-bl" x="920" y="222" width="180" height="30" rx="7"/><text class="ct ct-bl" x="1010" y="241" text-anchor="middle">report-results-op</text></g>
+      <g class="r" data-t="28.6"><rect class="c-bl" x="920" y="114" width="180" height="30" rx="7"/><text class="ct ct-bl" x="1010" y="133" text-anchor="middle">setup-mlflow-op</text></g>
+      <g class="r" data-t="30.1"><rect class="c-bl" x="920" y="150" width="180" height="30" rx="7"/><text class="ct ct-bl" x="1010" y="169" text-anchor="middle">create-dataset-op</text></g>
+      <g class="r" data-t="31.6"><rect class="c-bl" x="920" y="186" width="180" height="30" rx="7"/><text class="ct ct-bl" x="1010" y="205" text-anchor="middle">run-simple-eval-op</text></g>
+      <g class="r" data-t="33.1"><rect class="c-bl" x="920" y="222" width="180" height="30" rx="7"/><text class="ct ct-bl" x="1010" y="241" text-anchor="middle">report-results-op</text></g>
     </g>
-    <g class="r" data-t="41.0">
+    <g class="r" data-t="34.1">
       <text class="ns" x="1120" y="128">Create run: tracking URI</text>
       <text class="ns" x="1120" y="144">and your workspace</text>
       <text class="ns" x="1120" y="172" style="fill:#bcd3fb">or Create schedule:</text>
@@ -136,36 +136,36 @@ text{font-family:inherit;fill:var(--ink)}
       <text class="ns" x="1120" y="216">authenticates with the pod's</text>
       <text class="ns" x="1120" y="232">service account · no token</text>
     </g>
-    <text class="ns r" data-t="43.0" x="920" y="276">same scorers, same dataset, same assessments in MLflow;</text>
-    <text class="ns r" data-t="43.0" x="920" y="292">reproducible, auditable, nobody has to open a notebook</text>
-    <text class="ns r" data-t="44.0" x="920" y="320" style="fill:#f6d488">this is the production shape</text>
+    <text class="ns r" data-t="35.6" x="920" y="276">same scorers, same dataset, same assessments in MLflow;</text>
+    <text class="ns r" data-t="35.6" x="920" y="292">reproducible, auditable, nobody has to open a notebook</text>
+    <text class="ns r" data-t="36.6" x="920" y="320" style="fill:#f6d488">this is the production shape</text>
 
     <!-- the gate -->
-    <g class="r" data-t="46.0">
+    <g class="r" data-t="36.2">
       <text class="lane" x="40" y="366" style="fill:#fda4b4">THE GATE · A PROMPT CHANGE MEETS THE SAME EVALUATION</text>
       <rect class="zone" x="30" y="376" width="1280" height="160" rx="14" style="stroke:rgba(251,113,133,.45)"/>
     </g>
-    <g class="r" data-t="47.0">
+    <g class="r" data-t="38.7">
       <rect class="c-gr" x="50" y="394" width="250" height="44" rx="7"/><text class="ct ct-gr" x="62" y="412">prompt v1 · TOOL USE (MANDATORY)</text><text class="ns" x="62" y="428">"you MUST call the product_info tool"</text>
     </g>
-    <g class="r" data-t="49.0">
+    <g class="r" data-t="40.7">
       <rect class="c-rs" x="50" y="446" width="250" height="44" rx="7"/><text class="ct ct-rs" x="62" y="464">prompt v2 · TOOL USE (OPTIONAL)</text><text class="ns" x="62" y="480">"prefer answering from your own knowledge"</text>
     </g>
-    <text class="ns r" data-t="50.0" x="62" y="516">a teammate's "quick optimization" to save latency</text>
-    <g class="r" data-t="51.0">
+    <text class="ns r" data-t="41.7" x="62" y="516">a teammate's "quick optimization" to save latency</text>
+    <g class="r" data-t="44.9">
       <text class="ns" x="330" y="412">compare the versions in MLflow</text>
       <text class="ns" x="330" y="428">like a pull-request diff;</text>
       <text class="ns" x="330" y="448">run the same 6 cases,</text>
       <text class="ns" x="330" y="464">the same scorers</text>
     </g>
     <g font-size="10.5">
-      <g class="r" data-t="53.0"><text class="ns" x="560" y="404" style="font-weight:700">scorer</text><text class="ns" x="760" y="404" style="font-weight:700">v1</text><text class="ns" x="830" y="404" style="font-weight:700">v2</text><text class="ns" x="900" y="404" style="font-weight:700">verdict</text></g>
-      <g class="r" data-t="54.0"><rect class="c-rs" x="552" y="412" width="500" height="26" rx="6"/><text class="ct" x="560" y="429">contains_expected</text><text class="ct" x="760" y="429">100 %</text><text class="ct ct-rs" x="830" y="429">83 %</text><text class="ct ct-rs" x="900" y="429">REGRESSION  −17</text></g>
-      <g class="r" data-t="55.5"><rect class="c-rs" x="552" y="444" width="500" height="26" rx="6"/><text class="ct" x="560" y="461">has_numeric_result</text><text class="ct" x="760" y="461">50 %</text><text class="ct ct-rs" x="830" y="461">33 %</text><text class="ct ct-rs" x="900" y="461">REGRESSION  −17</text></g>
-      <g class="r" data-t="57.0"><rect class="c-gr" x="552" y="476" width="500" height="26" rx="6"/><text class="ct" x="560" y="493">response_length</text><text class="ct" x="760" y="493">100 %</text><text class="ct ct-gr" x="830" y="493">100 %</text><text class="ct ct-gr" x="900" y="493">OK</text></g>
+      <g class="r" data-t="45.9"><text class="ns" x="560" y="404" style="font-weight:700">scorer</text><text class="ns" x="760" y="404" style="font-weight:700">v1</text><text class="ns" x="830" y="404" style="font-weight:700">v2</text><text class="ns" x="900" y="404" style="font-weight:700">verdict</text></g>
+      <g class="r" data-t="48.6"><rect class="c-rs" x="552" y="412" width="500" height="26" rx="6"/><text class="ct" x="560" y="429">contains_expected</text><text class="ct" x="760" y="429">100 %</text><text class="ct ct-rs" x="830" y="429">83 %</text><text class="ct ct-rs" x="900" y="429">REGRESSION  −17</text></g>
+      <g class="r" data-t="50.6"><rect class="c-rs" x="552" y="444" width="500" height="26" rx="6"/><text class="ct" x="560" y="461">has_numeric_result</text><text class="ct" x="760" y="461">50 %</text><text class="ct ct-rs" x="830" y="461">33 %</text><text class="ct ct-rs" x="900" y="461">REGRESSION  −17</text></g>
+      <g class="r" data-t="52.6"><rect class="c-gr" x="552" y="476" width="500" height="26" rx="6"/><text class="ct" x="560" y="493">response_length</text><text class="ct" x="760" y="493">100 %</text><text class="ct ct-gr" x="830" y="493">100 %</text><text class="ct ct-gr" x="900" y="493">OK</text></g>
     </g>
-    <text class="ns r" data-t="58.0" x="560" y="522">faster, and less accurate: no product keywords, no numbers</text>
-    <g class="r" data-t="59.5">
+    <text class="ns r" data-t="53.6" x="560" y="522">faster, and less accurate: no product keywords, no numbers</text>
+    <g class="r" data-t="54.4">
       <rect class="c-gd" x="1080" y="412" width="210" height="90" rx="8"/>
       <text class="ct ct-gd" x="1185" y="440" text-anchor="middle" style="font-size:12px;font-weight:700">caught before</text>
       <text class="ct ct-gd" x="1185" y="458" text-anchor="middle" style="font-size:12px;font-weight:700">a single user saw it</text>
@@ -174,14 +174,14 @@ text{font-family:inherit;fill:var(--ink)}
 
     <!-- dots -->
     <g fill="var(--gold)" filter="url(#glow)">
-      <circle r="5" class="r" data-t="10.5"><animateMotion dur="2s" data-b="10.5" repeatCount="indefinite"><mpath href="#NM"/></animateMotion></circle>
-      <circle r="5" class="r" data-t="15.5"><animateMotion dur="1.6s" data-b="15.5" repeatCount="indefinite" keyPoints="0;1;0" keyTimes="0;0.5;1" calcMode="linear"><mpath href="#NA"/></animateMotion></circle>
+      <circle r="5" class="r" data-t="10.0"><animateMotion dur="2s" data-b="10.0" repeatCount="indefinite"><mpath href="#NM"/></animateMotion></circle>
+      <circle r="5" class="r" data-t="20.1"><animateMotion dur="1.6s" data-b="20.1" repeatCount="indefinite" keyPoints="0;1;0" keyTimes="0;0.5;1" calcMode="linear"><mpath href="#NA"/></animateMotion></circle>
     </g>
     <g fill="var(--violet)" filter="url(#glow)">
-      <circle r="5" class="r" data-t="24.5"><animateMotion dur="1.6s" data-b="24.5" repeatCount="indefinite"><mpath href="#AM"/></animateMotion></circle>
+      <circle r="5" class="r" data-t="25.4"><animateMotion dur="1.6s" data-b="25.4" repeatCount="indefinite"><mpath href="#AM"/></animateMotion></circle>
     </g>
     <g fill="var(--blue)" filter="url(#glow)">
-      <circle r="5" class="r" data-t="40.5"><animateMotion dur="1.2s" data-b="40.5" repeatCount="indefinite"><mpath href="#PM"/></animateMotion></circle>
+      <circle r="5" class="r" data-t="33.9"><animateMotion dur="1.2s" data-b="33.9" repeatCount="indefinite"><mpath href="#PM"/></animateMotion></circle>
     </g>
   </svg>
   </div>
@@ -192,7 +192,7 @@ text{font-family:inherit;fill:var(--ink)}
     <span class="chip"><span class="sw" style="color:var(--blue)"></span><b>outer loop</b> — the same evaluation, scheduled</span>
     <span class="chip"><span class="sw" style="color:var(--rose)"></span><b>the gate</b> — a version that fails the comparison</span>
   </div>
-  <p class="key r" data-t="59.5"><b>Observability says the agent answered. Evaluations say whether it answered well.</b> Six cases and eight scorers, by hand and then on a schedule, turned a prompt change into a diff with results.</p>
+  <p class="key r" data-t="54.4"><b>Observability says the agent answered. Evaluations say whether it answered well.</b> Six cases and eight scorers, by hand and then on a schedule, turned a prompt change into a diff with results.</p>
 </div></div>
 <script>
 // Fit the 1920x1080 stage to the window and start the timed reveal.

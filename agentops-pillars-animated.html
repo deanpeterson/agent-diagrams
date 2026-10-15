@@ -60,26 +60,26 @@ text{font-family:inherit;fill:var(--ink)}
     </defs>
 
     <!-- wires: question card edge -> signal box edge -->
-    <path id="Q1" class="wire w-bl draw r" data-t="27.0" pathLength="1" d="M 470,188 C 450,188 450,118 430,118"/>
-    <path id="Q2" class="wire w-gr draw r" data-t="30.0" pathLength="1" d="M 470,232 C 450,232 450,208 430,208"/>
-    <path id="Q3" class="wire w-vi draw r" data-t="33.0" pathLength="1" d="M 870,276 C 890,276 890,118 910,118"/>
-    <path id="Q4" class="wire w-bl draw r" data-t="36.0" pathLength="1" d="M 470,320 C 450,320 450,118 430,118"/>
-    <path id="Q5" class="wire w-gd draw r" data-t="39.0" pathLength="1" d="M 870,364 C 890,364 890,208 910,208"/>
-    <path id="Q6" class="wire w-gd draw r" data-t="42.0" pathLength="1" d="M 870,408 C 890,408 890,208 910,208"/>
+    <path id="Q1" class="wire w-bl draw r" data-t="34.3" pathLength="1" d="M 470,188 C 450,188 450,118 430,118"/>
+    <path id="Q2" class="wire w-gr draw r" data-t="37.8" pathLength="1" d="M 470,232 C 450,232 450,208 430,208"/>
+    <path id="Q3" class="wire w-vi draw r" data-t="42.9" pathLength="1" d="M 870,276 C 890,276 890,118 910,118"/>
+    <path id="Q4" class="wire w-bl draw r" data-t="45.1" pathLength="1" d="M 470,320 C 450,320 450,118 430,118"/>
+    <path id="Q5" class="wire w-gd draw r" data-t="47.7" pathLength="1" d="M 870,364 C 890,364 890,208 910,208"/>
+    <path id="Q6" class="wire w-gd draw r" data-t="50.3" pathLength="1" d="M 870,408 C 890,408 890,208 910,208"/>
 
     <!-- SRE lane -->
-    <g class="r" data-t="2.0">
+    <g class="r" data-t="6.3">
       <text class="lane" x="40" y="44" style="fill:#8fb3f6">SRE · PLATFORM ENGINEERING</text>
       <rect class="zone" x="30" y="56" width="410" height="212" rx="14"/>
       <text class="ns" x="48" y="260">system health · SLOs · capacity</text>
     </g>
-    <g class="r" data-t="4.0">
+    <g class="r" data-t="12.8">
       <g filter="url(#soft)"><rect class="node n-bl" x="50" y="80" width="380" height="76" rx="12"/></g>
       <text class="nt" x="68" y="106">OpenShift AI observability stack</text>
       <text class="ns" x="68" y="124">User Workload Monitoring: infrastructure metrics,</text>
       <text class="ns" x="68" y="142">pod health, resource use, the agent's /metrics</text>
     </g>
-    <g class="r" data-t="8.0">
+    <g class="r" data-t="14.6">
       <g filter="url(#soft)"><rect class="node n-gr" x="50" y="170" width="380" height="76" rx="12"/></g>
       <text class="nt" x="68" y="196">OpenShift Logging</text>
       <text class="ns" x="68" y="214">LokiStack: application events, errors, audit lines,</text>
@@ -87,18 +87,18 @@ text{font-family:inherit;fill:var(--ink)}
     </g>
 
     <!-- AI developer lane -->
-    <g class="r" data-t="14.0">
+    <g class="r" data-t="17.9">
       <text class="lane" x="920" y="44" style="fill:#c4b3fb">AI DEVELOPER · ENGINEER</text>
       <rect class="zone" x="910" y="56" width="400" height="212" rx="14" style="stroke:rgba(167,139,250,.45)"/>
       <text class="ns" x="928" y="260">model behavior · decision quality · agent performance</text>
     </g>
-    <g class="r" data-t="16.0">
+    <g class="r" data-t="23.5">
       <g filter="url(#soft)"><rect class="node n-vi" x="930" y="80" width="360" height="76" rx="12"/></g>
       <text class="nt" x="948" y="106">MLflow Tracing</text>
       <text class="ns" x="948" y="124">the path of every request: agent nodes,</text>
       <text class="ns" x="948" y="142">model spans with prompts, tool calls, sessions</text>
     </g>
-    <g class="r" data-t="20.0">
+    <g class="r" data-t="25.3">
       <g filter="url(#soft)"><rect class="node n-gd" x="930" y="170" width="360" height="76" rx="12"/></g>
       <text class="nt" x="948" y="196">MLflow Evaluations + Prompt Registry</text>
       <text class="ns" x="948" y="214">scorers, datasets and assessments on traces;</text>
@@ -106,42 +106,42 @@ text{font-family:inherit;fill:var(--ink)}
     </g>
 
     <!-- shared -->
-    <g class="r" data-t="24.0">
+    <g class="r" data-t="27.1">
       <g filter="url(#soft)"><rect class="node n-cy" x="470" y="80" width="400" height="60" rx="12"/></g>
       <text class="nt" x="670" y="105" text-anchor="middle">Grafana dashboards · shared by both</text>
       <text class="ns" x="670" y="126" text-anchor="middle">HTTP panels for the SRE, agent panels for the developer, one screen</text>
     </g>
 
     <!-- the questions -->
-    <text class="lane r" data-t="26.0" x="470" y="166" style="fill:#f6d488">THE QUESTIONS, AND THE SIGNAL THAT ANSWERS EACH</text>
+    <text class="lane r" data-t="31.7" x="470" y="166" style="fill:#f6d488">THE QUESTIONS, AND THE SIGNAL THAT ANSWERS EACH</text>
     <g font-size="10.5">
-      <g class="r" data-t="27.0"><rect class="c-bl" x="470" y="172" width="400" height="32" rx="7"/><text class="ct ct-bl" x="482" y="192">How many tokens did we consume today?</text><text class="ns" x="858" y="192" text-anchor="end">metrics</text></g>
-      <g class="r" data-t="30.0"><rect class="c-gr" x="470" y="216" width="400" height="32" rx="7"/><text class="ct ct-gr" x="482" y="236">Why is the API failing since the model config change?</text><text class="ns" x="858" y="236" text-anchor="end">logs</text></g>
-      <g class="r" data-t="33.0"><rect class="c-vi" x="470" y="260" width="400" height="32" rx="7"/><text class="ct ct-vi" x="482" y="280">Where is the bottleneck in loan processing?</text><text class="ns" x="858" y="280" text-anchor="end">traces</text></g>
-      <g class="r" data-t="36.0"><rect class="c-bl" x="470" y="304" width="400" height="32" rx="7"/><text class="ct ct-bl" x="482" y="324">Is the compliance check service degrading?</text><text class="ns" x="858" y="324" text-anchor="end">metrics</text></g>
-      <g class="r" data-t="39.0"><rect class="c-gd" x="470" y="348" width="400" height="32" rx="7"/><text class="ct ct-gd" x="482" y="368">Did the agent answer this inquiry correctly?</text><text class="ns" x="858" y="368" text-anchor="end">evaluations</text></g>
-      <g class="r" data-t="42.0"><rect class="c-gd" x="470" y="392" width="400" height="32" rx="7"/><text class="ct ct-gd" x="482" y="412">Which prompt version caused the drop?</text><text class="ns" x="858" y="412" text-anchor="end">prompt registry</text></g>
+      <g class="r" data-t="34.3"><rect class="c-bl" x="470" y="172" width="400" height="32" rx="7"/><text class="ct ct-bl" x="482" y="192">How many tokens did we consume today?</text><text class="ns" x="858" y="192" text-anchor="end">metrics</text></g>
+      <g class="r" data-t="37.8"><rect class="c-gr" x="470" y="216" width="400" height="32" rx="7"/><text class="ct ct-gr" x="482" y="236">Why is the API failing since the model config change?</text><text class="ns" x="858" y="236" text-anchor="end">logs</text></g>
+      <g class="r" data-t="42.9"><rect class="c-vi" x="470" y="260" width="400" height="32" rx="7"/><text class="ct ct-vi" x="482" y="280">Where is the bottleneck in loan processing?</text><text class="ns" x="858" y="280" text-anchor="end">traces</text></g>
+      <g class="r" data-t="45.1"><rect class="c-bl" x="470" y="304" width="400" height="32" rx="7"/><text class="ct ct-bl" x="482" y="324">Is the compliance check service degrading?</text><text class="ns" x="858" y="324" text-anchor="end">metrics</text></g>
+      <g class="r" data-t="47.7"><rect class="c-gd" x="470" y="348" width="400" height="32" rx="7"/><text class="ct ct-gd" x="482" y="368">Did the agent answer this inquiry correctly?</text><text class="ns" x="858" y="368" text-anchor="end">evaluations</text></g>
+      <g class="r" data-t="50.3"><rect class="c-gd" x="470" y="392" width="400" height="32" rx="7"/><text class="ct ct-gd" x="482" y="412">Which prompt version caused the drop?</text><text class="ns" x="858" y="412" text-anchor="end">prompt registry</text></g>
     </g>
 
     <!-- collaboration -->
-    <g class="r" data-t="47.0">
+    <g class="r" data-t="56.3">
       <text class="lane" x="40" y="462" style="fill:#f6d488">WHERE BOTH ARE IN THE ROOM</text>
       <rect class="zone" x="30" y="472" width="1280" height="64" rx="12" style="stroke:rgba(251,191,36,.45)"/>
     </g>
     <g font-size="10.5">
-      <g class="r" data-t="48.0"><rect class="c-gd" x="50" y="486" width="400" height="36" rx="7"/><text class="ct ct-gd" x="62" y="502">Latency spike</text><text class="ns" x="62" y="516">the SRE sees the symptom; the developer finds the prompt behind it</text></g>
-      <g class="r" data-t="50.0"><rect class="c-gd" x="470" y="486" width="400" height="36" rx="7"/><text class="ct ct-gd" x="482" y="502">Error rate up</text><text class="ns" x="482" y="516">the SRE sees the metric; the developer reads the failed traces</text></g>
-      <g class="r" data-t="52.0"><rect class="c-gd" x="890" y="486" width="400" height="36" rx="7"/><text class="ct ct-gd" x="902" y="502">Resource exhaustion</text><text class="ns" x="902" y="516">the SRE manages capacity; the developer trims the tokens</text></g>
+      <g class="r" data-t="61.0"><rect class="c-gd" x="50" y="486" width="400" height="36" rx="7"/><text class="ct ct-gd" x="62" y="502">Latency spike</text><text class="ns" x="62" y="516">the SRE sees the symptom; the developer finds the prompt behind it</text></g>
+      <g class="r" data-t="69.6"><rect class="c-gd" x="470" y="486" width="400" height="36" rx="7"/><text class="ct ct-gd" x="482" y="502">Error rate up</text><text class="ns" x="482" y="516">the SRE sees the metric; the developer reads the failed traces</text></g>
+      <g class="r" data-t="77.8"><rect class="c-gd" x="890" y="486" width="400" height="36" rx="7"/><text class="ct ct-gd" x="902" y="502">Resource exhaustion</text><text class="ns" x="902" y="516">the SRE manages capacity; the developer trims the tokens</text></g>
     </g>
 
     <!-- dots: each question's dot travels to its signal -->
     <g filter="url(#glow)">
-      <circle r="5" fill="var(--blue)" class="r" data-t="27.5"><animateMotion dur="2s" data-b="27.5" repeatCount="indefinite"><mpath href="#Q1"/></animateMotion></circle>
-      <circle r="5" fill="var(--green)" class="r" data-t="30.5"><animateMotion dur="2s" data-b="30.5" repeatCount="indefinite"><mpath href="#Q2"/></animateMotion></circle>
-      <circle r="5" fill="var(--violet)" class="r" data-t="33.5"><animateMotion dur="2s" data-b="33.5" repeatCount="indefinite"><mpath href="#Q3"/></animateMotion></circle>
-      <circle r="5" fill="var(--blue)" class="r" data-t="36.5"><animateMotion dur="2s" data-b="36.5" repeatCount="indefinite"><mpath href="#Q4"/></animateMotion></circle>
-      <circle r="5" fill="var(--gold)" class="r" data-t="39.5"><animateMotion dur="2s" data-b="39.5" repeatCount="indefinite"><mpath href="#Q5"/></animateMotion></circle>
-      <circle r="5" fill="var(--gold)" class="r" data-t="42.5"><animateMotion dur="2s" data-b="42.5" repeatCount="indefinite"><mpath href="#Q6"/></animateMotion></circle>
+      <circle r="5" fill="var(--blue)" class="r" data-t="34.8"><animateMotion dur="2s" data-b="34.8" repeatCount="indefinite"><mpath href="#Q1"/></animateMotion></circle>
+      <circle r="5" fill="var(--green)" class="r" data-t="38.3"><animateMotion dur="2s" data-b="38.3" repeatCount="indefinite"><mpath href="#Q2"/></animateMotion></circle>
+      <circle r="5" fill="var(--violet)" class="r" data-t="43.4"><animateMotion dur="2s" data-b="43.4" repeatCount="indefinite"><mpath href="#Q3"/></animateMotion></circle>
+      <circle r="5" fill="var(--blue)" class="r" data-t="45.6"><animateMotion dur="2s" data-b="45.6" repeatCount="indefinite"><mpath href="#Q4"/></animateMotion></circle>
+      <circle r="5" fill="var(--gold)" class="r" data-t="48.2"><animateMotion dur="2s" data-b="48.2" repeatCount="indefinite"><mpath href="#Q5"/></animateMotion></circle>
+      <circle r="5" fill="var(--gold)" class="r" data-t="50.8"><animateMotion dur="2s" data-b="50.8" repeatCount="indefinite"><mpath href="#Q6"/></animateMotion></circle>
     </g>
   </svg>
   </div>
@@ -152,7 +152,7 @@ text{font-family:inherit;fill:var(--ink)}
     <span class="chip"><span class="sw" style="color:var(--violet)"></span><b>traces</b> — why</span>
     <span class="chip"><span class="sw" style="color:var(--gold)"></span><b>evaluations and prompts</b> — how well, and what changed</span>
   </div>
-  <p class="key r" data-t="54.0"><b>Two owners, one stack.</b> The SRE reads health and capacity; the developer reads behavior and quality; the same platform records both, and the hard incidents need both people and both signals.</p>
+  <p class="key r" data-t="80.3"><b>Two owners, one stack.</b> The SRE reads health and capacity; the developer reads behavior and quality; the same platform records both, and the hard incidents need both people and both signals.</p>
 </div></div>
 <script>
 // Fit the 1920x1080 stage to the window and start the timed reveal.

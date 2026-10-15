@@ -61,63 +61,63 @@ text{font-family:inherit;fill:var(--ink)}
     </defs>
 
     <!-- what you saw -->
-    <g class="r" data-t="1.0">
+    <g class="r" data-t="7.5">
       <text class="lane" x="40" y="44" style="fill:#9fb0d0">WHAT YOU SAW</text>
       <g filter="url(#soft)"><rect class="node n-gy" x="40" y="56" width="420" height="64" rx="12"/></g>
       <text class="nt" x="58" y="82" style="font-family:ui-monospace,Menlo,monospace;font-size:13px">POST /api/ceo/chat  →  200 OK</text>
       <text class="ns" x="58" y="104">one status, one latency, nothing about what happened inside</text>
     </g>
-    <g class="r" data-t="3.0">
+    <g class="r" data-t="0.7">
       <g filter="url(#soft)"><rect class="node n-bl" x="500" y="56" width="300" height="64" rx="12"/></g>
       <text class="nt" x="518" y="82">"Show me the current pipeline status"</text>
       <text class="ns" x="518" y="104">David Park · CEO persona · Module 1, exercise 3</text>
     </g>
 
     <!-- the span tree -->
-    <text class="lane r" data-t="5.0" x="40" y="156" style="fill:#c4b3fb">WHAT HAPPENED · THE MLFLOW TRACE, ONE ROW PER SPAN</text>
+    <text class="lane r" data-t="10.3" x="40" y="156" style="fill:#c4b3fb">WHAT HAPPENED · THE MLFLOW TRACE, ONE ROW PER SPAN</text>
     <g font-size="10.5">
       <!-- row: name x=40 (indent), bar from x=420, scale: 1 s = 60 px, min 6 px -->
-      <g class="r" data-t="5.5"><text class="ct ct-vi" x="48" y="186">LangGraph</text><text class="ns" x="150" y="186">root: the whole workflow</text><rect class="bar" x="420" y="174" width="470" height="16" rx="4"/><text class="ns" x="900" y="186">≈ 7.8 s end to end</text></g>
-      <g class="r" data-t="8.0"><text class="ct ct-gr" x="64" y="212">input_shield</text><text class="ns" x="170" y="212">safety filter on the question</text><rect class="bar-gr" x="420" y="200" width="8" height="16" rx="3"/></g>
-      <g class="r" data-t="10.0"><text class="ct ct-vi" x="64" y="238">agent</text><text class="ns" x="150" y="238">LangGraph node: route to the model</text><rect class="bar" x="430" y="226" width="80" height="16" rx="3"/></g>
-      <g class="r" data-t="11.5"><text class="ct ct-gd" x="80" y="264">ChatOpenAI</text><text class="ns" x="170" y="264">the model decides to call a tool</text><rect class="bar-gd" x="430" y="252" width="76" height="16" rx="3"/><text class="ct ct-gd" x="514" y="264">1.26 s</text></g>
-      <g class="r" data-t="14.5"><text class="ct ct-vi" x="64" y="290">should_continue</text><text class="ns" x="190" y="290">decision point: keep going</text><rect class="bar" x="508" y="278" width="6" height="16" rx="3"/></g>
-      <g class="r" data-t="16.0"><text class="ct ct-gr" x="64" y="316">tool_auth</text><text class="ns" x="150" y="316">may the CEO role call this tool?</text><rect class="bar-gr" x="514" y="304" width="6" height="16" rx="3"/></g>
-      <g class="r" data-t="18.0"><text class="ct ct-gd" x="80" y="342">ceo_pipeline_summary</text><text class="ns" x="230" y="342">the tool queries the database</text><rect class="bar-gd" x="520" y="330" width="6" height="16" rx="3"/><text class="ct ct-gd" x="534" y="342">17 ms</text></g>
-      <g class="r" data-t="20.0"><text class="ns" x="80" y="366" style="fill:#f6d488">input  days: 90   ·   output  "Total active applications: 38 …"</text></g>
-      <g class="r" data-t="23.0"><text class="ct ct-vi" x="64" y="392">agent</text><text class="ns" x="150" y="392">the tool result goes back to the model</text><rect class="bar" x="526" y="380" width="8" height="16" rx="3"/></g>
-      <g class="r" data-t="24.5"><text class="ct ct-gd" x="80" y="418">ChatOpenAI</text><text class="ns" x="170" y="418">the model writes the answer</text><rect class="bar-gd" x="534" y="406" width="386" height="16" rx="3"/><text class="ct ct-gd" x="928" y="418">6.44 s</text></g>
-      <g class="r" data-t="28.0"><text class="ct ct-gr" x="64" y="444">output_shield</text><text class="ns" x="170" y="444">safety filter on the answer</text><rect class="bar-gr" x="920" y="432" width="8" height="16" rx="3"/></g>
+      <g class="r" data-t="11.1"><text class="ct ct-vi" x="48" y="186">LangGraph</text><text class="ns" x="150" y="186">root: the whole workflow</text><rect class="bar" x="420" y="174" width="470" height="16" rx="4"/><text class="ns" x="900" y="186">≈ 7.8 s end to end</text></g>
+      <g class="r" data-t="13.1"><text class="ct ct-gr" x="64" y="212">input_shield</text><text class="ns" x="170" y="212">safety filter on the question</text><rect class="bar-gr" x="420" y="200" width="8" height="16" rx="3"/></g>
+      <g class="r" data-t="15.5"><text class="ct ct-vi" x="64" y="238">agent</text><text class="ns" x="150" y="238">LangGraph node: route to the model</text><rect class="bar" x="430" y="226" width="80" height="16" rx="3"/></g>
+      <g class="r" data-t="16.7"><text class="ct ct-gd" x="80" y="264">ChatOpenAI</text><text class="ns" x="170" y="264">the model decides to call a tool</text><rect class="bar-gd" x="430" y="252" width="76" height="16" rx="3"/><text class="ct ct-gd" x="514" y="264">1.26 s</text></g>
+      <g class="r" data-t="22.6"><text class="ct ct-vi" x="64" y="290">should_continue</text><text class="ns" x="190" y="290">decision point: keep going</text><rect class="bar" x="508" y="278" width="6" height="16" rx="3"/></g>
+      <g class="r" data-t="23.0"><text class="ct ct-gr" x="64" y="316">tool_auth</text><text class="ns" x="150" y="316">may the CEO role call this tool?</text><rect class="bar-gr" x="514" y="304" width="6" height="16" rx="3"/></g>
+      <g class="r" data-t="27.8"><text class="ct ct-gd" x="80" y="342">ceo_pipeline_summary</text><text class="ns" x="230" y="342">the tool queries the database</text><rect class="bar-gd" x="520" y="330" width="6" height="16" rx="3"/><text class="ct ct-gd" x="534" y="342">17 ms</text></g>
+      <g class="r" data-t="30.8"><text class="ns" x="80" y="366" style="fill:#f6d488">input  days: 90   ·   output  "Total active applications: 38 …"</text></g>
+      <g class="r" data-t="36.2"><text class="ct ct-vi" x="64" y="392">agent</text><text class="ns" x="150" y="392">the tool result goes back to the model</text><rect class="bar" x="526" y="380" width="8" height="16" rx="3"/></g>
+      <g class="r" data-t="37.4"><text class="ct ct-gd" x="80" y="418">ChatOpenAI</text><text class="ns" x="170" y="418">the model writes the answer</text><rect class="bar-gd" x="534" y="406" width="386" height="16" rx="3"/><text class="ct ct-gd" x="928" y="418">6.44 s</text></g>
+      <g class="r" data-t="44.2"><text class="ct ct-gr" x="64" y="444">output_shield</text><text class="ns" x="170" y="444">safety filter on the answer</text><rect class="bar-gr" x="920" y="432" width="8" height="16" rx="3"/></g>
     </g>
-    <text class="ns r" data-t="30.0" x="420" y="470" style="fill:#c9b8fb">bars are to scale: seven and a half seconds in the model, seventeen milliseconds in the tool</text>
+    <text class="ns r" data-t="60.1" x="420" y="470" style="fill:#c9b8fb">bars are to scale: seven and a half seconds in the model, seventeen milliseconds in the tool</text>
 
     <!-- what the trace carries -->
-    <g class="r" data-t="33.0">
+    <g class="r" data-t="48.5">
       <text class="lane" x="1000" y="156" style="fill:#f6d488">WHAT THE TRACE CARRIES</text>
       <g filter="url(#soft)"><rect class="node n-gd" x="1000" y="168" width="300" height="200" rx="12"/></g>
     </g>
     <g font-size="10.5">
-      <g class="r" data-t="34.0"><rect class="c-gd" x="1016" y="184" width="268" height="30" rx="6"/><text class="ct ct-gd" x="1028" y="203">who: user id, email, name of the persona</text></g>
-      <g class="r" data-t="36.0"><rect class="c-gd" x="1016" y="222" width="268" height="30" rx="6"/><text class="ct ct-gd" x="1028" y="241">which model: qwen3-235b-a22b</text></g>
-      <g class="r" data-t="38.0"><rect class="c-gd" x="1016" y="260" width="268" height="30" rx="6"/><text class="ct ct-gd" x="1028" y="279">the system prompt and the raw completion</text></g>
-      <g class="r" data-t="40.0"><rect class="c-gd" x="1016" y="298" width="268" height="30" rx="6"/><text class="ct ct-gd" x="1028" y="317">tokens, latency, every tool's input and output</text></g>
-      <g class="r" data-t="42.0"><rect class="c-gd" x="1016" y="336" width="268" height="24" rx="6"/><text class="ct ct-gd" x="1028" y="352">the session: three turns, one conversation</text></g>
+      <g class="r" data-t="50.5"><rect class="c-gd" x="1016" y="184" width="268" height="30" rx="6"/><text class="ct ct-gd" x="1028" y="203">who: user id, email, name of the persona</text></g>
+      <g class="r" data-t="54.1"><rect class="c-gd" x="1016" y="222" width="268" height="30" rx="6"/><text class="ct ct-gd" x="1028" y="241">which model: qwen3-235b-a22b</text></g>
+      <g class="r" data-t="57.3"><rect class="c-gd" x="1016" y="260" width="268" height="30" rx="6"/><text class="ct ct-gd" x="1028" y="279">the system prompt and the raw completion</text></g>
+      <g class="r" data-t="58.5"><rect class="c-gd" x="1016" y="298" width="268" height="30" rx="6"/><text class="ct ct-gd" x="1028" y="317">tokens, latency, every tool's input and output</text></g>
+      <g class="r" data-t="59.5"><rect class="c-gd" x="1016" y="336" width="268" height="24" rx="6"/><text class="ct ct-gd" x="1028" y="352">the session: three turns, one conversation</text></g>
     </g>
 
     <!-- the one line -->
-    <g class="r" data-t="46.0">
+    <g class="r" data-t="67.3">
       <g filter="url(#soft)"><rect class="node n-vi" x="1000" y="396" width="300" height="80" rx="12"/></g>
       <text class="nt" x="1018" y="422" style="font-size:13px">The code that produced it</text>
       <text class="ct ct-vi" x="1018" y="446" style="font-family:ui-monospace,Menlo,monospace;font-size:12px">mlflow.langchain.autolog()</text>
       <text class="ns" x="1018" y="466">one line at startup · OpenTelemetry-compatible</text>
     </g>
 
-    <text class="nt r" data-t="50.0" x="40" y="520" style="fill:#f6d488;font-size:16px">Metrics tell you what. Traces tell you why, and where the time went.</text>
+    <text class="nt r" data-t="70.5" x="40" y="520" style="fill:#f6d488;font-size:16px">Metrics tell you what. Traces tell you why, and where the time went.</text>
 
     <!-- the request dot walking the tree -->
     <path id="WALK" d="M 420,182 L 424,208 L 470,234 L 468,260 L 511,286 L 517,312 L 523,338 L 530,388 L 727,414 L 924,440" fill="none" stroke="none"/>
     <g fill="var(--gold)" filter="url(#glow)">
-      <circle r="5.5" class="r" data-t="29.0"><animateMotion dur="6s" data-b="29.0" repeatCount="indefinite"><mpath href="#WALK"/></animateMotion></circle>
+      <circle r="5.5" class="r" data-t="45.2"><animateMotion dur="6s" data-b="45.2" repeatCount="indefinite"><mpath href="#WALK"/></animateMotion></circle>
     </g>
   </svg>
   </div>
@@ -127,7 +127,7 @@ text{font-family:inherit;fill:var(--ink)}
     <span class="chip"><span class="sw" style="color:var(--gold)"></span><b>model and tool</b> — the spans that take the time and hold the data</span>
     <span class="chip"><span class="sw" style="color:var(--green)"></span><b>shields and authorization</b> — the checks around them</span>
   </div>
-  <p class="key r" data-t="50.0"><b>One question, eleven spans.</b> The trace shows which tool ran, what it returned, which model answered from it, and that seven and a half of the eight seconds were the model, not the tool.</p>
+  <p class="key r" data-t="70.5"><b>One question, eleven spans.</b> The trace shows which tool ran, what it returned, which model answered from it, and that seven and a half of the eight seconds were the model, not the tool.</p>
 </div></div>
 <script>
 // Fit the 1920x1080 stage to the window and start the timed reveal.
