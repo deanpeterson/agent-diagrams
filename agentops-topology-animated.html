@@ -196,27 +196,96 @@ text{font-family:inherit;fill:var(--ink)}
   <p class="key r" data-t="79.4"><b>No code in the agents changes.</b> The platform scrapes the metrics, keeps the logs, records each call as a span, and runs the evaluations.</p>
 </div></div>
 <script>
-// Fit the 1920x1080 stage to the window and start the timed reveal.
-// Elements carry data-t (seconds, relative to the narration) for CSS animations; SMIL animateMotion carries data-b.
-// The player starts the narration 1.5 s after the page opens; the screen leads the voice by ~0.8 s.
+// Fit the 1920x1080 stage to the window and run the reveal.
+//
+// Three modes, chosen by the URL hash:
+//   (none)   timed: elements carry data-t (seconds, relative to the narration) and appear on their own;
+//            SMIL dots carry data-b / data-e. The player starts the narration 1.5 s after the page opens and
+//            the screen leads the voice by ~0.8 s.
+//   #t=N     still frame: the whole timeline jumped to N seconds (used for headless checks and deck stills).
+//   #steps   stepped, for presenting live: nothing moves by itself. Click, Space or Right arrow reveals the
+//            next stage instantly; Left goes back; End shows everything; Home resets; the bar of pills at the
+//            bottom jumps to any stage.
 (() => {
   const T0 = 0.5;
-  addEventListener('keydown', e => { if (e.key === 'r' || e.key === 'R') location.reload(); });
+  if (!/steps/.test(location.hash)) addEventListener('keydown', e => { if (e.key === 'r' || e.key === 'R') location.reload(); });
   const st = document.getElementById('stage');
-  const fit = () => { const s = Math.min(innerWidth / 1920, innerHeight / 1080); st.style.transform = `translate(-50%,-50%) scale(${s})`; };
+  const stepped = /steps/.test(location.hash);
+  let BAR = stepped ? 64 : 0;
+  const fit = () => {
+    const b = document.getElementById('stepbar'); if (b) BAR = b.offsetHeight;
+    const s = Math.min(innerWidth / 1920, (innerHeight - BAR) / 1080);
+    st.style.transform = `translate(-50%,-50%) scale(${s})`;
+    if (stepped) st.style.top = `calc(50% - ${BAR / 2}px)`;
+  };
   addEventListener('resize', fit); fit();
-  document.querySelectorAll('[data-t]').forEach(el => { el.style.animationDelay = (parseFloat(el.dataset.t) + T0) + 's'; });
-  document.querySelectorAll('[data-b]').forEach(a => { a.setAttribute('begin', (parseFloat(a.dataset.b) + T0) + 's'); });
-  document.querySelectorAll('[data-e]').forEach(a => { a.setAttribute('end', (parseFloat(a.dataset.e) + T0) + 's'); });
-  // #t=N: jump the whole timeline to N seconds (for still-frame checks)
-  const m = location.hash.match(/t=([\d.]+)/);
-  if (m) {
-    const t = parseFloat(m[1]);
-    document.querySelectorAll('[data-t]').forEach(el => { el.style.animationDelay = (parseFloat(el.dataset.t) + T0 - t) + 's'; });
-    document.querySelectorAll('[data-b]').forEach(a => { a.setAttribute('begin', (parseFloat(a.dataset.b) + T0 - t) + 's'); });
-    document.querySelectorAll('[data-e]').forEach(a => { a.setAttribute('end', (parseFloat(a.dataset.e) + T0 - t) + 's'); });
-    document.querySelectorAll('svg').forEach(s => { s.pauseAnimations(); s.setCurrentTime(0); s.unpauseAnimations(); });
+  const tEls = [...document.querySelectorAll('[data-t]')];
+  const bEls = [...document.querySelectorAll('[data-b]')];
+  const eEls = [...document.querySelectorAll('[data-e]')];
+
+  if (!stepped) {
+    tEls.forEach(el => { el.style.animationDelay = (parseFloat(el.dataset.t) + T0) + 's'; });
+    bEls.forEach(a => { a.setAttribute('begin', (parseFloat(a.dataset.b) + T0) + 's'); });
+    eEls.forEach(a => { a.setAttribute('end', (parseFloat(a.dataset.e) + T0) + 's'); });
+    const m = location.hash.match(/t=([\d.]+)/);
+    if (m) {
+      const t = parseFloat(m[1]);
+      tEls.forEach(el => { el.style.animationDelay = (parseFloat(el.dataset.t) + T0 - t) + 's'; });
+      bEls.forEach(a => { a.setAttribute('begin', (parseFloat(a.dataset.b) + T0 - t) + 's'); });
+      eEls.forEach(a => { a.setAttribute('end', (parseFloat(a.dataset.e) + T0 - t) + 's'); });
+      document.querySelectorAll('svg').forEach(s => { s.pauseAnimations(); s.setCurrentTime(0); s.unpauseAnimations(); });
+    }
+    return;
   }
+
+  // ---- stepped mode: group the authored times into stages (a gap over 1.2 s starts a new stage)
+  const times = [...new Set(tEls.map(e => +e.dataset.t))].sort((a, b) => a - b);
+  const stages = [];
+  times.forEach(t => { if (!stages.length || t - stages[stages.length - 1] > 1.2) stages.push(t); else stages[stages.length - 1] = t; });
+  let cur = 0;  // 0 = only the static parts; stages.length = everything
+  const bar = document.createElement('div'); bar.id = 'stepbar';
+  bar.innerHTML = `<style>
+    #stepbar{position:fixed;left:0;right:0;bottom:0;min-height:${BAR}px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;padding:8px 16px;box-sizing:border-box;
+      background:rgba(8,12,24,.94);border-top:1px solid #27344e;font:14px ui-sans-serif,system-ui,-apple-system,"Segoe UI",Inter,Roboto,Arial,sans-serif;color:#e8eefc;z-index:10}
+    #stepbar button{background:#121a2e;color:#e8eefc;border:1px solid #3b4a6b;border-radius:8px;padding:7px 12px;cursor:pointer;font:inherit}
+    #stepbar button:hover{border-color:#fbbf24}
+    #stepbar .pills{display:flex;gap:6px;flex-wrap:wrap;margin-left:6px}
+    #stepbar .pill{width:30px;height:30px;border-radius:50%;border:1px solid #3b4a6b;background:#121a2e;color:#9fb0d0;font-size:12px;padding:0}
+    #stepbar .pill.on{background:#fbbf24;color:#0a0f1e;border-color:#fbbf24;font-weight:700}
+    #stepbar .pill.done{border-color:#fbbf24;color:#fbbf24}
+    #stepbar .hint{margin-left:auto;color:#9fb0d0;font-size:12.5px}
+  </style>
+  <button id="sb-prev" title="Left arrow">◀ Back</button>
+  <button id="sb-next" title="Space, Right arrow, or click the diagram">Next ▶</button>
+  <button id="sb-all" title="End">Show all</button>
+  <span class="pills"></span>
+  <span class="hint"></span>`;
+  document.body.appendChild(bar);
+  fit();
+  const pills = bar.querySelector('.pills'), hint = bar.querySelector('.hint');
+  stages.forEach((_, i) => {
+    const b = document.createElement('button'); b.className = 'pill'; b.textContent = i + 1; b.title = `stage ${i + 1}`;
+    b.onclick = (e) => { e.stopPropagation(); go(i + 1); }; pills.appendChild(b);
+  });
+  function apply() {
+    const limit = cur ? stages[cur - 1] : -1;
+    tEls.forEach(el => { el.style.animationDelay = (+el.dataset.t <= limit) ? '-30s' : '9999s'; });
+    [...pills.children].forEach((p, i) => { p.classList.toggle('on', i + 1 === cur); p.classList.toggle('done', i + 1 < cur); });
+    hint.textContent = cur ? `stage ${cur} of ${stages.length}` : `${stages.length} stages · Space or click to begin`;
+  }
+  function go(n) { cur = Math.max(0, Math.min(stages.length, n)); apply(); }
+  bar.querySelector('#sb-prev').onclick = (e) => { e.stopPropagation(); go(cur - 1); };
+  bar.querySelector('#sb-next').onclick = (e) => { e.stopPropagation(); go(cur + 1); };
+  bar.querySelector('#sb-all').onclick = (e) => { e.stopPropagation(); go(stages.length); };
+  st.addEventListener('click', () => go(cur + 1));
+  addEventListener('keydown', (e) => {
+    if (e.code === 'Space' || e.code === 'ArrowRight' || e.code === 'Enter' || e.code === 'PageDown') { e.preventDefault(); go(cur + 1); }
+    else if (e.code === 'ArrowLeft' || e.code === 'Backspace' || e.code === 'PageUp') { e.preventDefault(); go(cur - 1); }
+    else if (e.code === 'End') { e.preventDefault(); go(stages.length); }
+    else if (e.code === 'Home' || e.key === 'r' || e.key === 'R') { e.preventDefault(); go(0); }
+  });
+  window.stepTo = go; window.stepState = () => ({ cur, stages: stages.length });
+  apply();
 })();
 </script>
 </body>
