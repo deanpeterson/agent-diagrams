@@ -230,7 +230,6 @@ text{font-family:inherit;fill:var(--ink)}
   <span class="pills"></span>
   <span class="hint"></span>`;
   document.body.appendChild(bar);
-  fit();
   const pills = bar.querySelector('.pills'), hint = bar.querySelector('.hint');
   stages.forEach((_, i) => {
     const b = document.createElement('button'); b.className = 'pill'; b.textContent = i + 1; b.title = `stage ${i + 1}`;
@@ -254,7 +253,7 @@ text{font-family:inherit;fill:var(--ink)}
     else if (e.code === 'Home' || e.key === 'r' || e.key === 'R') { e.preventDefault(); go(0); }
   });
   window.stepTo = go; window.stepState = () => ({ cur, stages: stages.length });
-  apply();
+  apply(); fit();
 })();
 </script>
 </body>
